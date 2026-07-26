@@ -1,6 +1,5 @@
 # Ignacio Cáceres
 
-## me gusta andar en bici 
+# Desarollador I
 
-Mi carpeta para analisis de sistemas siuuuuu
-
+# Tengo expericincia desarrollando programas y conexion con servidores
