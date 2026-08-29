@@ -1,16 +1,29 @@
-# React + Vite
+# Sistema Nacional de Becas - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Frontend del Sistema Nacional de Becas desarrollado con React y Vite.
 
-Currently, two official plugins are available:
+## HU-01 - Registro de estudiante
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Este módulo permite crear una cuenta de estudiante mediante los siguientes datos:
 
-## React Compiler
+- Nombre completo
+- Carnet
+- Correo electrónico
+- Contraseña
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+El formulario incluye validación de campos obligatorios, formato de correo electrónico y nivel de seguridad de la contraseña.
 
-## Expanding the Oxlint configuration
+El registro se comunica con el backend mediante:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+POST /api/auth/registro
+
+Durante el desarrollo, Vite utiliza un proxy hacia el backend Spring Boot ejecutado en:
+
+http://localhost:8090
+
+## Ejecutar el proyecto
+
+Instalar dependencias:
+
+```bash
+npm install
