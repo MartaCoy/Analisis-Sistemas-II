@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -12,6 +14,7 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,15 +22,14 @@ import static org.mockito.Mockito.*;
 
 /**
  * SENCAM - Sistema de Becas MINEDUC
- * Sprint 1 - HU-03: control de acceso mediante el filtro JWT.
+ * Sprint 1 - HU-03: control de acceso por rol (RBAC) mediante el filtro JWT.
  *
- * Verifica que solo un token valido autentique la peticion y que el filtro
- * nunca corte la cadena, para que Spring Security sea quien decida el 401.
- *
- * Autor: Edwin Daniel Mendez Castro (Desarrollador 2)
+ * Actualizado para la version de JwtAuthFilter que extrae el rol del token y
+ * lo publica como authority ROLE_<ROL>, que es lo que habilita el uso de
+ * @PreAuthorize / hasRole en los endpoints.
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("JwtAuthFilter - autenticacion por token en cada peticion")
+@DisplayName("JwtAuthFilter - autenticacion y rol en cada peticion")
 class JwtAuthFilterTest {
 
     @Mock
@@ -62,12 +64,46 @@ class JwtAuthFilterTest {
         request.addHeader("Authorization", "Bearer " + TOKEN);
         when(jwtService.esTokenValido(TOKEN)).thenReturn(true);
         when(jwtService.extraerCorreo(TOKEN)).thenReturn(CORREO);
+        when(jwtService.extraerRol(TOKEN)).thenReturn("ESTUDIANTE");
 
         jwtAuthFilter.doFilter(request, response, filterChain);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         assertThat(auth).isNotNull();
         assertThat(auth.getPrincipal()).isEqualTo(CORREO);
+    }
+
+    @ParameterizedTest(name = "rol: {0}")
+    @DisplayName("Publica el rol del token como authority ROLE_<ROL> (HU-03)")
+    @ValueSource(strings = {"ESTUDIANTE", "EVALUADOR", "ADMINISTRADOR"})
+    void publicaElRolComoAuthority(String rol) throws Exception {
+        request.addHeader("Authorization", "Bearer " + TOKEN);
+        when(jwtService.esTokenValido(TOKEN)).thenReturn(true);
+        when(jwtService.extraerCorreo(TOKEN)).thenReturn(CORREO);
+        when(jwtService.extraerRol(TOKEN)).thenReturn(rol);
+
+        jwtAuthFilter.doFilter(request, response, filterChain);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        assertThat(auth.getAuthorities())
+                .extracting(GrantedAuthority::getAuthority)
+                .containsExactly("ROLE_" + rol);
+    }
+
+    @Test
+    @DisplayName("Un estudiante no recibe la authority de administrador")
+    void noOtorgaAuthorityDeOtroRol() throws Exception {
+        request.addHeader("Authorization", "Bearer " + TOKEN);
+        when(jwtService.esTokenValido(TOKEN)).thenReturn(true);
+        when(jwtService.extraerCorreo(TOKEN)).thenReturn(CORREO);
+        when(jwtService.extraerRol(TOKEN)).thenReturn("ESTUDIANTE");
+
+        jwtAuthFilter.doFilter(request, response, filterChain);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        assertThat(auth.getAuthorities())
+                .extracting(GrantedAuthority::getAuthority)
+                .doesNotContain("ROLE_ADMINISTRADOR", "ROLE_EVALUADOR");
     }
 
     @Test
@@ -80,6 +116,7 @@ class JwtAuthFilterTest {
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
         verify(jwtService, never()).extraerCorreo(anyString());
+        verify(jwtService, never()).extraerRol(anyString());
     }
 
     @Test

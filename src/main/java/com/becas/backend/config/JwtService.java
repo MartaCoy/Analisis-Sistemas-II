@@ -45,4 +45,13 @@ public class JwtService {
             return false;
         }
     }
+    
+    public String extraerRol(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("rol", String.class);
+    }
 }

@@ -13,11 +13,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * SENCAM - Sistema de Becas MINEDUC
  * Sprint 1 - Pruebas unitarias del emisor/validador de tokens JWT.
  *
- * Aqui NO se usan mocks: JwtService no tiene dependencias externas, asi que
- * se prueba la clase real. Se valida el ciclo completo firmar -> leer ->
- * verificar, que es la base de la autenticacion de todo el sistema.
+ * Archivo fusionado: conserva la cobertura de la version anterior de main
+ * (generar token, extraer correo, extraer rol, token invalido) y agrega
+ * casos de borde y de seguridad.
  *
- * Autor: Edwin Daniel Mendez Castro (Desarrollador 2)
+ * Aqui NO se usan mocks: JwtService no tiene dependencias externas, asi que
+ * se prueba la clase real.
  */
 @DisplayName("JwtService - emision y validacion de tokens")
 class JwtServiceTest {
@@ -31,6 +32,10 @@ class JwtServiceTest {
         jwtService = new JwtService();
     }
 
+    // ------------------------------------------------------------------
+    // Emision
+    // ------------------------------------------------------------------
+
     @Test
     @DisplayName("Genera un token con las tres partes del formato JWT")
     void generaTokenConFormatoValido() {
@@ -41,29 +46,11 @@ class JwtServiceTest {
     }
 
     @Test
-    @DisplayName("El correo puede recuperarse intacto desde el token emitido")
-    void recuperaElCorreoDelToken() {
-        String token = jwtService.generarToken(CORREO, "ESTUDIANTE");
-
-        assertThat(jwtService.extraerCorreo(token)).isEqualTo(CORREO);
-    }
-
-    @Test
     @DisplayName("Un token recien emitido se considera valido")
     void tokenRecienEmitidoEsValido() {
         String token = jwtService.generarToken(CORREO, "ESTUDIANTE");
 
         assertThat(jwtService.esTokenValido(token)).isTrue();
-    }
-
-    @ParameterizedTest(name = "rol: {0}")
-    @DisplayName("Emite tokens para los tres roles del sistema (HU-03)")
-    @ValueSource(strings = {"ESTUDIANTE", "EVALUADOR", "ADMINISTRADOR"})
-    void emiteTokenParaCadaRol(String rol) {
-        String token = jwtService.generarToken(CORREO, rol);
-
-        assertThat(jwtService.esTokenValido(token)).isTrue();
-        assertThat(jwtService.extraerCorreo(token)).isEqualTo(CORREO);
     }
 
     @Test
@@ -75,6 +62,51 @@ class JwtServiceTest {
         assertThat(tokenEdwin).isNotEqualTo(tokenMarta);
         assertThat(jwtService.extraerCorreo(tokenMarta)).isEqualTo("mcoys2@miumg.edu.gt");
     }
+
+    // ------------------------------------------------------------------
+    // Lectura de claims
+    // ------------------------------------------------------------------
+
+    @Test
+    @DisplayName("El correo puede recuperarse intacto desde el token emitido")
+    void recuperaElCorreoDelToken() {
+        String token = jwtService.generarToken(CORREO, "ESTUDIANTE");
+
+        assertThat(jwtService.extraerCorreo(token)).isEqualTo(CORREO);
+    }
+
+    @Test
+    @DisplayName("El rol puede recuperarse intacto desde el token emitido")
+    void recuperaElRolDelToken() {
+        String token = jwtService.generarToken("ssalama@miumg.edu.gt", "ADMINISTRADOR");
+
+        assertThat(jwtService.extraerRol(token)).isEqualTo("ADMINISTRADOR");
+    }
+
+    @ParameterizedTest(name = "rol: {0}")
+    @DisplayName("Emite y recupera correctamente los tres roles del sistema (HU-03)")
+    @ValueSource(strings = {"ESTUDIANTE", "EVALUADOR", "ADMINISTRADOR"})
+    void emiteYRecuperaCadaRol(String rol) {
+        String token = jwtService.generarToken(CORREO, rol);
+
+        assertThat(jwtService.esTokenValido(token)).isTrue();
+        assertThat(jwtService.extraerCorreo(token)).isEqualTo(CORREO);
+        assertThat(jwtService.extraerRol(token)).isEqualTo(rol);
+    }
+
+    @Test
+    @DisplayName("El rol de un token no se confunde con el de otro")
+    void noMezclaRolesEntreTokens() {
+        String tokenEstudiante = jwtService.generarToken(CORREO, "ESTUDIANTE");
+        String tokenAdmin = jwtService.generarToken(CORREO, "ADMINISTRADOR");
+
+        assertThat(jwtService.extraerRol(tokenEstudiante)).isEqualTo("ESTUDIANTE");
+        assertThat(jwtService.extraerRol(tokenAdmin)).isEqualTo("ADMINISTRADOR");
+    }
+
+    // ------------------------------------------------------------------
+    // Seguridad
+    // ------------------------------------------------------------------
 
     @Test
     @DisplayName("Rechaza un token cuya firma fue alterada")
@@ -91,7 +123,7 @@ class JwtServiceTest {
         String token = jwtService.generarToken(CORREO, "ESTUDIANTE");
         String[] partes = token.split("\\.");
 
-        // Se sustituye el payload por otro valido en base64 pero no firmado.
+        // Payload valido en base64 pero no firmado por el servicio.
         String payloadFalso = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(
                 ("{\"sub\":\"" + CORREO + "\",\"rol\":\"ADMINISTRADOR\"}").getBytes());
         String tokenFalsificado = partes[0] + "." + payloadFalso + "." + partes[2];
@@ -101,7 +133,7 @@ class JwtServiceTest {
 
     @ParameterizedTest(name = "entrada invalida: \"{0}\"")
     @DisplayName("Rechaza cadenas que no son tokens sin lanzar excepcion")
-    @ValueSource(strings = {"", "   ", "token-invalido", "a.b.c", "Bearer algo"})
+    @ValueSource(strings = {"", "   ", "token-falso-que-no-existe", "a.b.c", "Bearer algo"})
     void rechazaCadenasQueNoSonTokens(String entrada) {
         assertThat(jwtService.esTokenValido(entrada)).isFalse();
     }
@@ -110,6 +142,13 @@ class JwtServiceTest {
     @DisplayName("Extraer el correo de un token invalido lanza excepcion")
     void extraerCorreoDeTokenInvalidoFalla() {
         assertThatThrownBy(() -> jwtService.extraerCorreo("token-invalido"))
+                .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    @DisplayName("Extraer el rol de un token invalido lanza excepcion")
+    void extraerRolDeTokenInvalidoFalla() {
+        assertThatThrownBy(() -> jwtService.extraerRol("token-invalido"))
                 .isInstanceOf(Exception.class);
     }
 }
