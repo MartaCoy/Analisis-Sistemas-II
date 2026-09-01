@@ -5,6 +5,7 @@ public class RegistroRequest {
     private String correo;
     private String password;
     private String carnet;
+    private Long universidadId;
 
     public String getNombreCompleto() { return nombreCompleto; }
     public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
@@ -17,4 +18,7 @@ public class RegistroRequest {
 
     public String getCarnet() { return carnet; }
     public void setCarnet(String carnet) { this.carnet = carnet; }
+    
+    public Long getUniversidadId() { return universidadId; }
+    public void setUniversidadId(Long universidadId) { this.universidadId = universidadId; }
 }
