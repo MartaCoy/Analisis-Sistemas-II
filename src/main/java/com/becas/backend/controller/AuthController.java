@@ -35,11 +35,13 @@ public class AuthController {
         estudiante.setCorreo(request.getCorreo());
         estudiante.setPassword(passwordEncoder.encode(request.getPassword()));
         estudiante.setCarnet(request.getCarnet());
+        estudiante.setUniversidadId(request.getUniversidadId());
 
         estudianteRepository.save(estudiante);
 
         String token = jwtService.generarToken(estudiante.getCorreo(), estudiante.getRol());
         return ResponseEntity.ok(new AuthResponse(token, estudiante.getNombreCompleto(), estudiante.getCorreo(), estudiante.getRol()));
+        
     }
 
     @PostMapping("/login")
@@ -54,4 +56,6 @@ public class AuthController {
         String token = jwtService.generarToken(estudiante.getCorreo(), estudiante.getRol());
         return ResponseEntity.ok(new AuthResponse(token, estudiante.getNombreCompleto(), estudiante.getCorreo(), estudiante.getRol()));
     }
+    
+    
 }
