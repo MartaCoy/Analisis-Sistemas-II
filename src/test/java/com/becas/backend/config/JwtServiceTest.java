@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -18,7 +19,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * casos de borde y de seguridad.
  *
  * Aqui NO se usan mocks: JwtService no tiene dependencias externas, asi que
- * se prueba la clase real.
+ * se prueba la clase real. El secret se inyecta manualmente porque ahora
+ * viene de una variable de entorno (JWT_SECRET) en produccion.
  */
 @DisplayName("JwtService - emision y validacion de tokens")
 class JwtServiceTest {
@@ -30,6 +32,7 @@ class JwtServiceTest {
     @BeforeEach
     void inicializar() {
         jwtService = new JwtService();
+        ReflectionTestUtils.setField(jwtService, "jwtSecretString", "test-secret-key-para-pruebas-unitarias-2026");
     }
 
     // ------------------------------------------------------------------
@@ -123,7 +126,6 @@ class JwtServiceTest {
         String token = jwtService.generarToken(CORREO, "ESTUDIANTE");
         String[] partes = token.split("\\.");
 
-        // Payload valido en base64 pero no firmado por el servicio.
         String payloadFalso = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(
                 ("{\"sub\":\"" + CORREO + "\",\"rol\":\"ADMINISTRADOR\"}").getBytes());
         String tokenFalsificado = partes[0] + "." + payloadFalso + "." + partes[2];
