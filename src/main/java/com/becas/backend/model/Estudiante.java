@@ -38,8 +38,14 @@ public class Estudiante {
     public void setCarnet(String carnet) { this.carnet = carnet; }
     
     @Column(nullable = false)
-    private String rol = "ESTUDIANTE"; // ESTUDIANTE, EVALUADOR, ADMINISTRADOR
+    private String rol = "ESTUDIANTE"; 
 
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
+    
+    @Column(name = "universidad_id", nullable = false)
+    private Long universidadId;
+
+    public Long getUniversidadId() { return universidadId; }
+    public void setUniversidadId(Long universidadId) { this.universidadId = universidadId; }
 }
