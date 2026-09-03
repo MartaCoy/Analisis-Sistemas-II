@@ -1,4 +1,5 @@
 const API_URL = "/api/auth";
+
 async function procesarRespuesta(respuesta) {
     const contentType = respuesta.headers.get("content-type");
 
@@ -24,9 +25,10 @@ async function procesarRespuesta(respuesta) {
 
 export async function registrarEstudiante(datos) {
     try {
+        console.log("Enviando al backend:", datos); // <-- para debug. Quítalo después
+
         const respuesta = await fetch(`${API_URL}/registro`, {
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json",
                 Accept: "application/json",
@@ -37,6 +39,7 @@ export async function registrarEstudiante(datos) {
                 carnet: datos.carnet.trim(),
                 correo: datos.correo.trim().toLowerCase(),
                 password: datos.password,
+                universidadId: Number(datos.universidadId) // <-- CLAVE: YA LO ENVIA
             }),
         });
 
@@ -51,3 +54,4 @@ export async function registrarEstudiante(datos) {
         throw error;
     }
 }
+
