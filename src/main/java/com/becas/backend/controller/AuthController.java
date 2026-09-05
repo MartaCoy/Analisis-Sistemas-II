@@ -1,6 +1,7 @@
 package com.becas.backend.controller;
 
 import com.becas.backend.config.JwtService;
+
 import com.becas.backend.dto.AuthResponse;
 import com.becas.backend.dto.LoginRequest;
 import com.becas.backend.dto.RegistroRequest;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,7 +27,8 @@ public class AuthController {
     private JwtService jwtService;
 
     @PostMapping("/registro")
-    public ResponseEntity<?> registrar(@RequestBody RegistroRequest request) {
+    //public ResponseEntity<?> registrar(@RequestBody RegistroRequest request) {
+    public ResponseEntity<?> registrar(@Valid @RequestBody RegistroRequest request) {
         if (estudianteRepository.findByCorreo(request.getCorreo()).isPresent()) {
             return ResponseEntity.badRequest().body("Ya existe un estudiante con ese correo.");
         }
@@ -45,7 +48,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    //public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         Estudiante estudiante = estudianteRepository.findByCorreo(request.getCorreo())
                 .orElse(null);
 
