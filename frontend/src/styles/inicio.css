@@ -1,0 +1,771 @@
+/* =========================================================
+   INICIO - SISTEMA NACIONAL DE BECAS
+   Identidad tecnológica con geometría mesoamericana
+   ========================================================= */
+
+.inicio-page {
+  --fondo: #031316;
+  --fondo-profundo: #02090b;
+  --panel: rgba(5, 30, 33, 0.72);
+  --cian: #55f5e7;
+  --cian-suave: rgba(85, 245, 231, 0.18);
+  --jade: #44bfa3;
+  --dorado: #d9b45b;
+  --texto: #eefcfb;
+  --texto-suave: #8faead;
+  --borde: rgba(85, 245, 231, 0.22);
+
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+
+  background:
+    radial-gradient(
+      circle at 75% 45%,
+      rgba(37, 141, 134, 0.12),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 18% 25%,
+      rgba(25, 91, 91, 0.1),
+      transparent 28%
+    ),
+    linear-gradient(
+      135deg,
+      var(--fondo-profundo) 0%,
+      var(--fondo) 55%,
+      #041b1d 100%
+    );
+
+  color: var(--texto);
+  isolation: isolate;
+}
+
+
+/* ---------------------------------------------------------
+   RETÍCULA TECNOLÓGICA
+   --------------------------------------------------------- */
+
+.inicio-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -4;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      rgba(72, 235, 218, 0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(72, 235, 218, 0.035) 1px,
+      transparent 1px
+    );
+
+  background-size: 64px 64px;
+
+  mask-image:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.85),
+      rgba(0, 0, 0, 0.3)
+    );
+}
+
+
+/* Líneas decorativas verticales */
+
+.inicio-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 7%;
+  width: 1px;
+  height: 100%;
+  z-index: -2;
+
+  background:
+    linear-gradient(
+      transparent,
+      rgba(85, 245, 231, 0.22),
+      transparent
+    );
+}
+
+
+/* Brillo ambiental */
+
+.inicio-page::after {
+  content: "";
+  position: absolute;
+  width: 680px;
+  height: 680px;
+  right: -150px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(70, 221, 204, 0.08),
+      transparent 68%
+    );
+
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: -3;
+}
+
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+   ========================================================= */
+
+.inicio-contenido {
+  position: relative;
+  z-index: 3;
+
+  width: min(680px, 88%);
+  margin-left: clamp(40px, 9vw, 150px);
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ---------------------------------------------------------
+   IDENTIFICADOR DEL SISTEMA
+   --------------------------------------------------------- */
+
+.inicio-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+
+  width: fit-content;
+  margin-bottom: 54px;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+
+  color: var(--cian);
+}
+
+.marca-pulso {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+  background: var(--cian);
+
+  box-shadow:
+    0 0 8px var(--cian),
+    0 0 20px rgba(85, 245, 231, 0.5);
+
+  animation: pulsoSistema 2.4s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.inicio-hero {
+  position: relative;
+}
+
+.inicio-codigo {
+  margin: 0 0 18px;
+
+  color: var(--dorado);
+
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+}
+
+.inicio-hero h1 {
+  max-width: 720px;
+  margin: 0;
+
+  font-size: clamp(3rem, 5.7vw, 6.2rem);
+  line-height: 0.94;
+  font-weight: 300;
+  letter-spacing: -0.045em;
+
+  color: var(--texto);
+}
+
+.inicio-hero h1 strong {
+  display: block;
+  margin-top: 9px;
+
+  font-weight: 700;
+  color: var(--cian);
+
+  text-shadow:
+    0 0 26px rgba(85, 245, 231, 0.12);
+}
+
+.inicio-descripcion {
+  max-width: 580px;
+
+  margin-top: 31px;
+  margin-bottom: 0;
+
+  font-size: 1rem;
+  line-height: 1.8;
+
+  color: var(--texto-suave);
+}
+
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.inicio-acciones {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  margin-top: 40px;
+}
+
+.btn-principal,
+.btn-secundario {
+  position: relative;
+
+  min-height: 52px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
+}
+
+
+/* Principal */
+
+.btn-principal {
+  min-width: 218px;
+
+  justify-content: space-between;
+  gap: 30px;
+
+  padding: 0 19px;
+
+  color: #021012;
+  background: var(--cian);
+
+  border: 1px solid var(--cian);
+
+  box-shadow:
+    0 0 0 rgba(85, 245, 231, 0);
+}
+
+.btn-principal span {
+  font-size: 1.2rem;
+
+  transition: transform 180ms ease;
+}
+
+.btn-principal:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 30px rgba(85, 245, 231, 0.18);
+}
+
+.btn-principal:hover span {
+  transform: translateX(4px);
+}
+
+
+/* Secundario */
+
+.btn-secundario {
+  min-width: 170px;
+  padding: 0 20px;
+
+  color: var(--texto);
+  background: rgba(2, 18, 21, 0.38);
+
+  border: 1px solid var(--borde);
+}
+
+.btn-secundario:hover {
+  transform: translateY(-2px);
+
+  color: var(--cian);
+  border-color: rgba(85, 245, 231, 0.55);
+
+  background: rgba(85, 245, 231, 0.055);
+}
+
+
+/* Esquinas técnicas del botón principal */
+
+.btn-principal::before,
+.btn-principal::after {
+  content: "";
+  position: absolute;
+
+  width: 7px;
+  height: 7px;
+
+  transition: 180ms ease;
+}
+
+.btn-principal::before {
+  top: -4px;
+  left: -4px;
+
+  border-top: 1px solid var(--cian);
+  border-left: 1px solid var(--cian);
+}
+
+.btn-principal::after {
+  right: -4px;
+  bottom: -4px;
+
+  border-right: 1px solid var(--cian);
+  border-bottom: 1px solid var(--cian);
+}
+
+
+/* =========================================================
+   INDICADORES INFERIORES
+   ========================================================= */
+
+.inicio-indicadores {
+  display: flex;
+  gap: 38px;
+
+  margin-top: 68px;
+}
+
+.inicio-indicadores > div {
+  position: relative;
+
+  min-width: 125px;
+  padding-top: 14px;
+
+  border-top: 1px solid rgba(85, 245, 231, 0.15);
+}
+
+.inicio-indicadores > div::before {
+  content: "";
+  position: absolute;
+
+  top: -1px;
+  left: 0;
+
+  width: 24px;
+  height: 1px;
+
+  background: var(--cian);
+}
+
+.inicio-indicadores span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+
+  color: var(--cian);
+}
+
+.inicio-indicadores p {
+  margin: 0;
+
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+
+  color: #688987;
+}
+
+
+/* =========================================================
+   SELLO GEOMÉTRICO
+   ========================================================= */
+
+.inicio-sello {
+  position: absolute;
+
+  right: clamp(60px, 10vw, 190px);
+  top: 50%;
+
+  width: clamp(300px, 31vw, 520px);
+  aspect-ratio: 1;
+
+  transform: translateY(-50%);
+
+  display: grid;
+  place-items: center;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+/* Líneas cruzadas detrás */
+
+.inicio-sello::before,
+.inicio-sello::after {
+  content: "";
+  position: absolute;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(85, 245, 231, 0.18),
+      transparent
+    );
+}
+
+.inicio-sello::before {
+  width: 135%;
+  height: 1px;
+}
+
+.inicio-sello::after {
+  height: 135%;
+  width: 1px;
+}
+
+
+/* Anillo externo */
+
+.sello-exterior {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(85, 245, 231, 0.22);
+
+  display: grid;
+  place-items: center;
+
+  box-shadow:
+    inset 0 0 60px rgba(85, 245, 231, 0.025),
+    0 0 60px rgba(85, 245, 231, 0.025);
+
+  animation:
+    rotacionSello 38s linear infinite;
+}
+
+
+/* Segmentos tecnológicos */
+
+.sello-exterior::before {
+  content: "";
+
+  position: absolute;
+  inset: 18px;
+
+  border-radius: 50%;
+
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(85, 245, 231, 0.72) 0deg 1deg,
+      transparent 1deg 12deg
+    );
+
+  mask:
+    radial-gradient(
+      circle,
+      transparent 66%,
+      #000 67% 69%,
+      transparent 70%
+    );
+
+  opacity: 0.48;
+}
+
+
+/* Geometría escalonada */
+
+.sello-exterior::after {
+  content: "";
+
+  position: absolute;
+
+  width: 60%;
+  height: 60%;
+
+  border:
+    1px solid rgba(217, 180, 91, 0.18);
+
+  transform: rotate(45deg);
+
+  box-shadow:
+    0 0 30px rgba(217, 180, 91, 0.025);
+}
+
+
+/* Anillo interior */
+
+.sello-interior {
+  position: relative;
+
+  width: 48%;
+  height: 48%;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(85, 245, 231, 0.42);
+
+  box-shadow:
+    0 0 34px rgba(85, 245, 231, 0.07);
+
+  animation:
+    rotacionSelloInversa 25s linear infinite;
+}
+
+
+/* Cuadrado interior */
+
+.sello-interior::before {
+  content: "";
+
+  position: absolute;
+
+  width: 58%;
+  height: 58%;
+
+  transform: rotate(45deg);
+
+  border:
+    1px solid rgba(85, 245, 231, 0.32);
+}
+
+
+/* Núcleo */
+
+.sello-interior span {
+  position: relative;
+
+  width: 44px;
+  height: 44px;
+
+  transform: rotate(45deg);
+
+  border:
+    1px solid var(--cian);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(85, 245, 231, 0.22),
+      rgba(85, 245, 231, 0.025) 65%
+    );
+
+  box-shadow:
+    0 0 18px rgba(85, 245, 231, 0.24);
+
+  animation:
+    pulsoNucleo 3s ease-in-out infinite;
+}
+
+.sello-interior span::after {
+  content: "";
+
+  position: absolute;
+  inset: 10px;
+
+  border:
+    1px solid rgba(217, 180, 91, 0.65);
+}
+
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+@keyframes pulsoSistema {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.88);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes rotacionSello {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotacionSelloInversa {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes pulsoNucleo {
+  0%,
+  100% {
+    opacity: 0.65;
+    box-shadow:
+      0 0 12px rgba(85, 245, 231, 0.13);
+  }
+
+  50% {
+    opacity: 1;
+    box-shadow:
+      0 0 30px rgba(85, 245, 231, 0.38);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .inicio-contenido {
+    margin-left: 7vw;
+  }
+
+  .inicio-sello {
+    right: -100px;
+    opacity: 0.45;
+  }
+}
+
+
+@media (max-width: 760px) {
+  .inicio-page {
+    align-items: flex-start;
+
+    min-height: 100svh;
+
+    padding:
+      70px 0
+      45px;
+  }
+
+  .inicio-contenido {
+    width: 86%;
+    margin: 0 auto;
+  }
+
+  .inicio-marca {
+    margin-bottom: 50px;
+
+    font-size: 0.62rem;
+  }
+
+  .inicio-hero h1 {
+    font-size:
+      clamp(
+        2.7rem,
+        14vw,
+        4.4rem
+      );
+  }
+
+  .inicio-descripcion {
+    font-size: 0.94rem;
+  }
+
+  .inicio-acciones {
+    align-items: stretch;
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  .btn-principal,
+  .btn-secundario {
+    width: 100%;
+  }
+
+  .inicio-indicadores {
+    gap: 18px;
+
+    margin-top: 55px;
+
+    overflow-x: auto;
+  }
+
+  .inicio-indicadores > div {
+    min-width: 115px;
+  }
+
+  .inicio-sello {
+    width: 390px;
+
+    top: 57%;
+    right: -235px;
+
+    opacity: 0.22;
+  }
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .marca-pulso,
+  .sello-exterior,
+  .sello-interior,
+  .sello-interior span {
+    animation: none;
+  }
+
+  .btn-principal,
+  .btn-secundario,
+  .btn-principal span {
+    transition: none;
+  }
+}
