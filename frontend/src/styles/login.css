@@ -1,0 +1,298 @@
+.login-card {
+  max-width: 420px;
+}
+
+.login-volver {
+  margin-top: 14px;
+
+  text-align: center;
+
+  font-size: 0.68rem;
+}
+
+.login-volver a {
+  color: rgba(151, 187, 184, 0.7);
+
+  text-decoration: none;
+
+  transition:
+    color 180ms ease;
+}
+
+.login-volver a:hover {
+  color: #55f5e7;
+}
+
+
+/* =========================================================
+   AUTENTICACIÓN
+   ========================================================= */
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 30000;
+
+  display: grid;
+  place-items: center;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(12, 77, 75, 0.22),
+      transparent 38%
+    ),
+    rgba(1, 9, 11, 0.97);
+
+  animation:
+    authAparecer
+    250ms
+    ease
+    both;
+}
+
+
+.auth-nucleo {
+  position: relative;
+
+  width: 330px;
+  height: 330px;
+
+  display: grid;
+  place-items: center;
+}
+
+
+.auth-ring {
+  position: absolute;
+
+  border-radius: 50%;
+}
+
+
+.auth-ring-one {
+  width: 235px;
+  height: 235px;
+
+  border:
+    1px solid
+    rgba(85, 245, 231, 0.45);
+
+  animation:
+    authRotacion
+    5s
+    linear
+    infinite;
+}
+
+
+.auth-ring-one::before {
+  content: "";
+
+  position: absolute;
+  inset: 12px;
+
+  border-radius: 50%;
+
+  background:
+    repeating-conic-gradient(
+      rgba(85, 245, 231, 0.9)
+      0deg 2deg,
+
+      transparent
+      2deg 16deg
+    );
+
+  -webkit-mask:
+    radial-gradient(
+      circle,
+      transparent 70%,
+      #000 71% 74%,
+      transparent 75%
+    );
+
+  mask:
+    radial-gradient(
+      circle,
+      transparent 70%,
+      #000 71% 74%,
+      transparent 75%
+    );
+
+  opacity: 0.55;
+}
+
+
+.auth-ring-two {
+  width: 145px;
+  height: 145px;
+
+  border:
+    1px solid
+    rgba(217, 180, 91, 0.52);
+
+  animation:
+    authRotacionInversa
+    3.5s
+    linear
+    infinite;
+}
+
+
+.auth-diamond {
+  width: 56px;
+  height: 56px;
+
+  display: grid;
+  place-items: center;
+
+  transform: rotate(45deg);
+
+  border:
+    1px solid #55f5e7;
+
+  background:
+    rgba(85, 245, 231, 0.05);
+
+  box-shadow:
+    0 0 30px
+    rgba(85, 245, 231, 0.35),
+
+    0 0 80px
+    rgba(85, 245, 231, 0.12);
+}
+
+
+.auth-diamond span {
+  width: 17px;
+  height: 17px;
+
+  border:
+    1px solid #d9b45b;
+
+  background:
+    rgba(217, 180, 91, 0.16);
+}
+
+
+.auth-nucleo p {
+  position: absolute;
+
+  top: calc(50% + 125px);
+
+  margin: 0;
+
+  white-space: nowrap;
+
+  color: #55f5e7;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+
+  letter-spacing: 0.28em;
+}
+
+
+.auth-nucleo small {
+  position: absolute;
+
+  top: calc(50% + 154px);
+
+  color:
+    rgba(151, 187, 184, 0.58);
+
+  font-size: 0.48rem;
+
+  letter-spacing: 0.22em;
+}
+
+
+.auth-overlay--autorizado
+.auth-diamond {
+  border-color: #82ffd6;
+
+  box-shadow:
+    0 0 40px
+    rgba(130, 255, 214, 0.65),
+
+    0 0 120px
+    rgba(130, 255, 214, 0.16);
+}
+
+
+.auth-scan-line {
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+  width: 100%;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #55f5e7,
+      #d9b45b,
+      #55f5e7,
+      transparent
+    );
+
+  box-shadow:
+    0 0 18px
+    rgba(85, 245, 231, 0.7);
+
+  animation:
+    authScan
+    1.5s
+    linear
+    infinite;
+}
+
+
+@keyframes authAparecer {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+@keyframes authRotacion {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+@keyframes authRotacionInversa {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+
+@keyframes authScan {
+  from {
+    top: 0%;
+  }
+
+  to {
+    top: 100%;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-ring,
+  .auth-scan-line {
+    animation: none;
+  }
+}

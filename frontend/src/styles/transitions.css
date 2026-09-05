@@ -1,0 +1,766 @@
+/* =========================================================
+   TRANSICIÓN CONTROLADA ENTRE PANTALLAS
+   Sistema Nacional de Becas
+   ========================================================= */
+
+.route-transition {
+  position: fixed;
+  inset: 0;
+
+  z-index: 20000;
+
+  overflow: hidden;
+  pointer-events: all;
+
+  display: grid;
+  place-items: center;
+}
+
+
+/* =========================================================
+   PANELES PRINCIPALES
+   ========================================================= */
+
+.transition-panel {
+  position: absolute;
+  top: 0;
+
+  width: 50.2%;
+  height: 100%;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(13, 67, 68, 0.25),
+      transparent 55%
+    ),
+    linear-gradient(
+      135deg,
+      #02090b 0%,
+      #031719 55%,
+      #052629 100%
+    );
+
+  box-shadow:
+    inset 0 0 90px
+    rgba(85, 245, 231, 0.025);
+}
+
+
+.transition-panel-left {
+  left: 0;
+
+  border-right:
+    1px solid
+    rgba(85, 245, 231, 0.3);
+}
+
+
+.transition-panel-right {
+  right: 0;
+
+  border-left:
+    1px solid
+    rgba(85, 245, 231, 0.3);
+}
+
+
+/* =========================================================
+   FASE 1
+   CERRAR PANTALLA ACTUAL
+   ========================================================= */
+
+.route-transition--closing
+.transition-panel-left {
+  animation:
+    cerrarIzquierda
+    650ms
+    cubic-bezier(0.76, 0, 0.24, 1)
+    both;
+}
+
+
+.route-transition--closing
+.transition-panel-right {
+  animation:
+    cerrarDerecha
+    650ms
+    cubic-bezier(0.76, 0, 0.24, 1)
+    both;
+}
+
+
+@keyframes cerrarIzquierda {
+  from {
+    transform: translateX(-101%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+
+@keyframes cerrarDerecha {
+  from {
+    transform: translateX(101%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+
+/* =========================================================
+   FASE 2
+   ABRIR NUEVA PANTALLA
+   ========================================================= */
+
+.route-transition--opening
+.transition-panel-left {
+  animation:
+    abrirIzquierda
+    700ms
+    cubic-bezier(0.76, 0, 0.24, 1)
+    both;
+}
+
+
+.route-transition--opening
+.transition-panel-right {
+  animation:
+    abrirDerecha
+    700ms
+    cubic-bezier(0.76, 0, 0.24, 1)
+    both;
+}
+
+
+@keyframes abrirIzquierda {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-101%);
+  }
+}
+
+
+@keyframes abrirDerecha {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(101%);
+  }
+}
+
+
+/* =========================================================
+   NÚCLEO CENTRAL
+   ========================================================= */
+
+.transition-center {
+  position: relative;
+
+  z-index: 5;
+
+  width: 280px;
+  height: 280px;
+
+  display: grid;
+  place-items: center;
+
+  color: #55f5e7;
+}
+
+
+/* Aparece mientras se cierra */
+
+.route-transition--closing
+.transition-center {
+  animation:
+    aparecerCentro
+    650ms
+    ease
+    both;
+}
+
+
+/* Desaparece mientras se abre */
+
+.route-transition--opening
+.transition-center {
+  animation:
+    desaparecerCentro
+    520ms
+    ease
+    both;
+}
+
+
+@keyframes aparecerCentro {
+  0%,
+  35% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+@keyframes desaparecerCentro {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+
+/* =========================================================
+   ANILLOS TECNOLÓGICOS
+   ========================================================= */
+
+.transition-ring {
+  position: absolute;
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(85, 245, 231, 0.42);
+}
+
+
+.transition-ring-one {
+  width: 180px;
+  height: 180px;
+
+  animation:
+    giroDerecha
+    5s
+    linear
+    infinite;
+}
+
+
+.transition-ring-one::before {
+  content: "";
+
+  position: absolute;
+  inset: 10px;
+
+  border-radius: 50%;
+
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+
+      rgba(85, 245, 231, 0.9)
+      0deg 2deg,
+
+      transparent
+      2deg 18deg
+    );
+
+  -webkit-mask:
+    radial-gradient(
+      circle,
+
+      transparent 70%,
+
+      #000 71% 74%,
+
+      transparent 75%
+    );
+
+  mask:
+    radial-gradient(
+      circle,
+
+      transparent 70%,
+
+      #000 71% 74%,
+
+      transparent 75%
+    );
+
+  opacity: 0.55;
+}
+
+
+.transition-ring-two {
+  width: 112px;
+  height: 112px;
+
+  border-color:
+    rgba(217, 180, 91, 0.5);
+
+  animation:
+    giroIzquierda
+    3.5s
+    linear
+    infinite;
+}
+
+
+@keyframes giroDerecha {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+@keyframes giroIzquierda {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+
+/* =========================================================
+   ROMBO CENTRAL
+   ========================================================= */
+
+.transition-diamond {
+  width: 46px;
+  height: 46px;
+
+  transform: rotate(45deg);
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid #55f5e7;
+
+  background:
+    rgba(85, 245, 231, 0.06);
+
+  box-shadow:
+    0 0 18px
+    rgba(85, 245, 231, 0.35),
+
+    0 0 55px
+    rgba(85, 245, 231, 0.12);
+
+  animation:
+    pulsoNavegacion
+    800ms
+    ease-in-out
+    infinite alternate;
+}
+
+
+.transition-diamond span {
+  width: 14px;
+  height: 14px;
+
+  border:
+    1px solid #d9b45b;
+
+  background:
+    rgba(217, 180, 91, 0.12);
+}
+
+
+@keyframes pulsoNavegacion {
+  from {
+    box-shadow:
+      0 0 12px
+      rgba(85, 245, 231, 0.18);
+  }
+
+  to {
+    box-shadow:
+      0 0 32px
+      rgba(85, 245, 231, 0.48),
+
+      0 0 75px
+      rgba(85, 245, 231, 0.14);
+  }
+}
+
+
+/* =========================================================
+   TEXTOS DEL NÚCLEO
+   ========================================================= */
+
+.transition-center p {
+  position: absolute;
+
+  top: calc(50% + 105px);
+
+  margin: 0;
+
+  white-space: nowrap;
+
+  font-size: 0.58rem;
+  font-weight: 700;
+
+  letter-spacing: 0.25em;
+
+  color: #55f5e7;
+}
+
+
+.transition-center small {
+  position: absolute;
+
+  top: calc(50% + 128px);
+
+  white-space: nowrap;
+
+  font-size: 0.48rem;
+
+  letter-spacing: 0.22em;
+
+  color:
+    rgba(180, 211, 208, 0.68);
+}
+
+
+/* =========================================================
+   LÍNEA DE ENERGÍA CENTRAL
+   ========================================================= */
+
+.transition-line {
+  position: absolute;
+
+  z-index: 4;
+
+  left: 50%;
+  top: 0;
+
+  width: 1px;
+  height: 100%;
+
+  transform: translateX(-50%);
+
+  background:
+    linear-gradient(
+      transparent,
+
+      rgba(85, 245, 231, 0.15),
+
+      #55f5e7,
+
+      #d9b45b,
+
+      #55f5e7,
+
+      rgba(85, 245, 231, 0.15),
+
+      transparent
+    );
+
+  box-shadow:
+    0 0 18px
+    rgba(85, 245, 231, 0.55);
+}
+
+
+/* Encender durante cierre */
+
+.route-transition--closing
+.transition-line {
+  animation:
+    encenderLinea
+    650ms
+    ease
+    both;
+}
+
+
+/* Apagar durante apertura */
+
+.route-transition--opening
+.transition-line {
+  animation:
+    apagarLinea
+    450ms
+    ease
+    both;
+}
+
+
+@keyframes encenderLinea {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      scaleY(0);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      scaleY(1);
+  }
+}
+
+
+@keyframes apagarLinea {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+
+/* =========================================================
+   ATRÁS / ADELANTE DEL NAVEGADOR
+   phase = "history"
+
+   Cuando React detecta navegación con ← o →,
+   la nueva pantalla ya cambió internamente.
+   Esta capa aparece encima y la revela de forma
+   controlada para evitar un cambio seco.
+   ========================================================= */
+
+.route-transition--history
+.transition-panel-left {
+  animation:
+    abrirIzquierda
+    700ms
+    cubic-bezier(0.76, 0, 0.24, 1)
+    both;
+}
+
+
+.route-transition--history
+.transition-panel-right {
+  animation:
+    abrirDerecha
+    700ms
+    cubic-bezier(0.76, 0, 0.24, 1)
+    both;
+}
+
+
+.route-transition--history
+.transition-center {
+  animation:
+    desaparecerCentroHistory
+    620ms
+    ease
+    both;
+}
+
+
+.route-transition--history
+.transition-line {
+  animation:
+    apagarLineaHistory
+    600ms
+    ease
+    both;
+}
+
+
+@keyframes desaparecerCentroHistory {
+  0% {
+    opacity: 1;
+    transform: scale(0.92);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.16);
+  }
+}
+
+
+@keyframes apagarLineaHistory {
+  0% {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      scaleY(1);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      scaleY(0.35);
+  }
+}
+
+
+/* =========================================================
+   DETALLES AMBIENTALES
+   ========================================================= */
+
+.route-transition::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 3;
+
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      rgba(85, 245, 231, 0.022)
+      1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(85, 245, 231, 0.022)
+      1px,
+      transparent 1px
+    );
+
+  background-size:
+    58px 58px;
+
+  opacity: 0.65;
+}
+
+
+.route-transition::after {
+  content: "";
+
+  position: absolute;
+
+  z-index: 3;
+
+  width: 520px;
+  height: 520px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+
+      rgba(85, 245, 231, 0.09),
+
+      rgba(85, 245, 231, 0.025) 38%,
+
+      transparent 70%
+    );
+
+  animation:
+    respiracionEnergia
+    1.5s
+    ease-in-out
+    infinite alternate;
+}
+
+
+@keyframes respiracionEnergia {
+  from {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .transition-center {
+    width: 240px;
+    height: 240px;
+  }
+
+
+  .transition-ring-one {
+    width: 155px;
+    height: 155px;
+  }
+
+
+  .transition-ring-two {
+    width: 98px;
+    height: 98px;
+  }
+
+
+  .transition-diamond {
+    width: 40px;
+    height: 40px;
+  }
+
+
+  .transition-center p {
+    top: calc(50% + 92px);
+
+    font-size: 0.5rem;
+
+    letter-spacing: 0.19em;
+  }
+
+
+  .transition-center small {
+    top: calc(50% + 115px);
+
+    font-size: 0.43rem;
+
+    letter-spacing: 0.17em;
+  }
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .transition-panel,
+  .transition-center,
+  .transition-line,
+  .transition-ring,
+  .transition-diamond,
+  .route-transition::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
