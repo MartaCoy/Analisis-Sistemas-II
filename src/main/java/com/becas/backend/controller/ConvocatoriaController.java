@@ -30,4 +30,10 @@ public class ConvocatoriaController {
 
     @PutMapping("/{id}/cerrar")
     public Convocatoria cerrar(@PathVariable Long id) { return convocatoriaService.cerrar(id); }
+
+    @PutMapping("/{id}")
+    public Convocatoria editar(@PathVariable Long id, @RequestBody ConvocatoriaRequest request) {
+        return convocatoriaService.editar(id, request);
+    }
+
 }

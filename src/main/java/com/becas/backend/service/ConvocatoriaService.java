@@ -48,4 +48,14 @@ public class ConvocatoriaService {
         if (c != null) { c.setEstado("CERRADA"); convocatoriaRepository.save(c); }
         return c;
     }
+    public Convocatoria editar(Long id, ConvocatoriaRequest request) {
+        Convocatoria c = obtener(id);
+        if (c == null) return null;
+        c.setNombre(request.getNombre());
+        c.setTipoBeca(request.getTipoBeca());
+        c.setRequisitos(request.getRequisitos());
+        c.setFechaApertura(request.getFechaApertura());
+        c.setFechaCierre(request.getFechaCierre());
+        return convocatoriaRepository.save(c);
+    }
 }
