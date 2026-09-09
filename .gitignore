@@ -35,4 +35,7 @@ build/
 # Archivos sensibles - NUNCA subir
 *.env
 .env
+
 application-local.properties
+# Documentos subidos por estudiantes (almacenamiento local temporal)
+uploads/

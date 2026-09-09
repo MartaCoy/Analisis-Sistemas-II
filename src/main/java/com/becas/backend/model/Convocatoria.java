@@ -25,6 +25,8 @@ public class Convocatoria {
 
     @Column(nullable = false)
     private String estado = "BORRADOR"; // BORRADOR, PUBICADA, CERRADA
+    @Column(name = "documentos_requeridos")
+    private String documentosRequeridos;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -40,4 +42,6 @@ public class Convocatoria {
     public void setFechaCierre(LocalDate fechaCierre) { this.fechaCierre = fechaCierre; }
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
+    public String getDocumentosRequeridos() { return documentosRequeridos; }
+    public void setDocumentosRequeridos(String documentosRequeridos) { this.documentosRequeridos = documentosRequeridos; }
 }
