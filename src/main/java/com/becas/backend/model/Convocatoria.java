@@ -15,16 +15,20 @@ public class Convocatoria {
     private String nombre;
 
     @Column(nullable = false)
-    private String tipoBeca; // ACADEMICA, DEPORTIVA, SOCIOECONOMIka
+    private String tipoBeca;
 
     @Column(length = 1000)
     private String requisitos;
+
+    @Column(length = 500)
+    private String beneficio;
 
     private LocalDate fechaApertura;
     private LocalDate fechaCierre;
 
     @Column(nullable = false)
-    private String estado = "BORRADOR"; // BORRADOR, PUBICADA, CERRADA
+    private String estado = "BORRADOR";
+
     @Column(name = "documentos_requeridos")
     private String documentosRequeridos;
 
@@ -36,6 +40,8 @@ public class Convocatoria {
     public void setTipoBeca(String tipoBeca) { this.tipoBeca = tipoBeca; }
     public String getRequisitos() { return requisitos; }
     public void setRequisitos(String requisitos) { this.requisitos = requisitos; }
+    public String getBeneficio() { return beneficio; }
+    public void setBeneficio(String beneficio) { this.beneficio = beneficio; }
     public LocalDate getFechaApertura() { return fechaApertura; }
     public void setFechaApertura(LocalDate fechaApertura) { this.fechaApertura = fechaApertura; }
     public LocalDate getFechaCierre() { return fechaCierre; }

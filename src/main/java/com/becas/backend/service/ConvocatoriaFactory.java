@@ -8,21 +8,21 @@ import java.time.LocalDate;
 @Component
 public class ConvocatoriaFactory {
 
-    public Convocatoria crearAcademica(String nombre, String requisitos, LocalDate apertura, LocalDate cierre) {
+    public Convocatoria crearAcademica(String nombre, String requisitos, String beneficio, LocalDate apertura, LocalDate cierre) {
         return new ConvocatoriaBuilder()
-                .nombre(nombre).tipoBeca("ACADEMICA").requisitos(requisitos)
+                .nombre(nombre).tipoBeca("ACADEMICA").requisitos(requisitos).beneficio(beneficio)
                 .fechaApertura(apertura).fechaCierre(cierre).build();
     }
 
-    public Convocatoria crearDeportiva(String nombre, String requisitos, LocalDate apertura, LocalDate cierre) {
+    public Convocatoria crearDeportiva(String nombre, String requisitos, String beneficio, LocalDate apertura, LocalDate cierre) {
         return new ConvocatoriaBuilder()
-                .nombre(nombre).tipoBeca("DEPORTIVA").requisitos(requisitos)
+                .nombre(nombre).tipoBeca("DEPORTIVA").requisitos(requisitos).beneficio(beneficio)
                 .fechaApertura(apertura).fechaCierre(cierre).build();
     }
 
-    public Convocatoria crearSocioeconomica(String nombre, String requisitos, LocalDate apertura, LocalDate cierre) {
+    public Convocatoria crearSocioeconomica(String nombre, String requisitos, String beneficio, LocalDate apertura, LocalDate cierre) {
         return new ConvocatoriaBuilder()
-                .nombre(nombre).tipoBeca("SOCIOECONOMICA").requisitos(requisitos)
+                .nombre(nombre).tipoBeca("SOCIOECONOMICA").requisitos(requisitos).beneficio(beneficio)
                 .fechaApertura(apertura).fechaCierre(cierre).build();
     }
 }

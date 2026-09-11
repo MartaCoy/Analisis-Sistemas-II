@@ -6,6 +6,7 @@ public class ConvocatoriaRequest {
     private String nombre;
     private String tipoBeca;
     private String requisitos;
+    private String beneficio;
     private LocalDate fechaApertura;
     private LocalDate fechaCierre;
 
@@ -15,6 +16,8 @@ public class ConvocatoriaRequest {
     public void setTipoBeca(String tipoBeca) { this.tipoBeca = tipoBeca; }
     public String getRequisitos() { return requisitos; }
     public void setRequisitos(String requisitos) { this.requisitos = requisitos; }
+    public String getBeneficio() { return beneficio; }
+    public void setBeneficio(String beneficio) { this.beneficio = beneficio; }
     public LocalDate getFechaApertura() { return fechaApertura; }
     public void setFechaApertura(LocalDate fechaApertura) { this.fechaApertura = fechaApertura; }
     public LocalDate getFechaCierre() { return fechaCierre; }
