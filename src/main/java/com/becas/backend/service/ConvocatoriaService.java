@@ -28,11 +28,11 @@ public class ConvocatoriaService {
     public Convocatoria crear(ConvocatoriaRequest request) {
         Convocatoria convocatoria = switch (request.getTipoBeca()) {
             case "DEPORTIVA" -> convocatoriaFactory.crearDeportiva(
-                    request.getNombre(), request.getRequisitos(), request.getFechaApertura(), request.getFechaCierre());
+                    request.getNombre(), request.getRequisitos(), request.getBeneficio(), request.getFechaApertura(), request.getFechaCierre());
             case "SOCIOECONOMICA" -> convocatoriaFactory.crearSocioeconomica(
-                    request.getNombre(), request.getRequisitos(), request.getFechaApertura(), request.getFechaCierre());
+                    request.getNombre(), request.getRequisitos(), request.getBeneficio(), request.getFechaApertura(), request.getFechaCierre());
             default -> convocatoriaFactory.crearAcademica(
-                    request.getNombre(), request.getRequisitos(), request.getFechaApertura(), request.getFechaCierre());
+                    request.getNombre(), request.getRequisitos(), request.getBeneficio(), request.getFechaApertura(), request.getFechaCierre());
         };
         return convocatoriaRepository.save(convocatoria);
     }
@@ -48,12 +48,14 @@ public class ConvocatoriaService {
         if (c != null) { c.setEstado("CERRADA"); convocatoriaRepository.save(c); }
         return c;
     }
+
     public Convocatoria editar(Long id, ConvocatoriaRequest request) {
         Convocatoria c = obtener(id);
         if (c == null) return null;
         c.setNombre(request.getNombre());
         c.setTipoBeca(request.getTipoBeca());
         c.setRequisitos(request.getRequisitos());
+        c.setBeneficio(request.getBeneficio());
         c.setFechaApertura(request.getFechaApertura());
         c.setFechaCierre(request.getFechaCierre());
         return convocatoriaRepository.save(c);
