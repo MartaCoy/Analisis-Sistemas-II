@@ -8,6 +8,7 @@ import Inicio from "./pages/Inicio";
 import Registro from "./pages/Registro";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Convocatorias from "./pages/Convocatorias";
 
 import GlyphTrail from "./components/GlyphTrail";
 
@@ -59,6 +60,25 @@ function App() {
             <RutaProtegida>
               <Dashboard />
             </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/convocatorias"
+          element={
+            <RutaProtegida>
+              <Convocatorias />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
           }
         />
       </Routes>
