@@ -4,13 +4,15 @@ import {
   Routes,
 } from "react-router-dom";
 
-import Inicio from "./pages/Inicio";
-import Registro from "./pages/Registro";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Convocatorias from "./pages/Convocatorias";
+import Inicio from "./pages/Inicio.jsx";
+import Registro from "./pages/Registro.jsx";
+import Login from "./pages/Login.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import Convocatorias from "./pages/Convocatorias.jsx";
 
-import GlyphTrail from "./components/GlyphTrail";
+import GestionConvocatorias from "./pages/admin/GestionConvocatorias.jsx";
+
+import GlyphTrail from "./components/GlyphTrail.jsx";
 
 import {
   TransitionProvider,
@@ -18,13 +20,33 @@ import {
 
 import {
   estaAutenticado,
-} from "./services/authService";
+  obtenerSesion,
+} from "./services/authService.js";
 
-function RutaProtegida({ children }) {
+/*
+ * Controla qué pantalla se muestra según la sesión.
+ * Los permisos reales de cada petición los valida el backend.
+ */
+function RutaProtegida({
+  children,
+  soloAdministrador = false,
+}) {
   if (!estaAutenticado()) {
     return (
       <Navigate
         to="/login"
+        replace
+      />
+    );
+  }
+
+  if (
+    soloAdministrador &&
+    obtenerSesion()?.rol !== "ADMINISTRADOR"
+  ) {
+    return (
+      <Navigate
+        to="/dashboard"
         replace
       />
     );
@@ -68,6 +90,15 @@ function App() {
           element={
             <RutaProtegida>
               <Convocatorias />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/admin/convocatorias"
+          element={
+            <RutaProtegida soloAdministrador>
+              <GestionConvocatorias />
             </RutaProtegida>
           }
         />

@@ -1,43 +1,94 @@
 import {
   cerrarSesion,
   obtenerSesion,
-} from "../services/authService";
+} from "../services/authService.js";
 
 import {
   usePageTransition,
-} from "../components/usePageTransition";
+} from "../components/usePageTransition.js";
 
 import "../styles/dashboard.css";
 
-function obtenerIniciales(nombre = "") {
-  const partes = nombre
+function obtenerIniciales(nombre) {
+  const partes = String(nombre ?? "")
     .trim()
     .split(/\s+/)
     .filter(Boolean);
 
-  if (partes.length === 0) {
-    return "US";
-  }
-
-  return partes
-    .slice(0, 2)
-    .map((parte) => parte.charAt(0))
-    .join("")
-    .toUpperCase();
+  return (
+    partes
+      .slice(0, 2)
+      .map((parte) => parte.charAt(0))
+      .join("")
+      .toUpperCase() || "US"
+  );
 }
 
 function Dashboard() {
   const sesion = obtenerSesion();
 
-  const { irA } = usePageTransition();
+  const {
+    irA,
+    transicionActiva,
+  } = usePageTransition();
+
+  const administrador =
+    sesion?.rol === "ADMINISTRADOR";
+
+  // Solo los módulos con una ruta tienen una acción disponible.
+  const modulos = [
+    ...(administrador
+      ? [
+          {
+            titulo: "Gestión de convocatorias",
+            categoria: "ADMINISTRACIÓN",
+            descripcion:
+              "Define beneficios y requisitos, prepara borradores y controla la publicación y el cierre de convocatorias.",
+            ruta: "/admin/convocatorias",
+            accion: "GESTIONAR CONVOCATORIAS",
+          },
+        ]
+      : []),
+
+    {
+      titulo: "Convocatorias",
+      categoria: "EXPLORACIÓN ACADÉMICA",
+      descripcion:
+        "Consulta las oportunidades de beca publicadas, sus fechas, requisitos y condiciones.",
+      ruta: "/convocatorias",
+      accion: "EXPLORAR CONVOCATORIAS",
+    },
+
+    {
+      titulo: "Mis solicitudes",
+      categoria: "GESTIÓN DE PROCESOS",
+      descripcion:
+        "Este módulo permitirá administrar solicitudes y consultar el avance de cada proceso de beca.",
+    },
+
+    {
+      titulo: "Estado del proceso",
+      categoria: "SEGUIMIENTO ACADÉMICO",
+      descripcion:
+        "Permitirá visualizar el estado y los cambios asociados a las solicitudes registradas.",
+    },
+  ];
 
   const manejarCerrarSesion = () => {
+    if (transicionActiva) {
+      return;
+    }
+
     cerrarSesion();
     irA("/");
   };
 
-  const abrirConvocatorias = () => {
-    irA("/convocatorias");
+  const abrirModulo = (ruta) => {
+    if (transicionActiva || !ruta) {
+      return;
+    }
+
+    irA(ruta);
   };
 
   return (
@@ -59,7 +110,10 @@ function Dashboard() {
 
       <header className="dashboard-header">
         <div className="dashboard-brand">
-          <span className="dashboard-brand-pulso" />
+          <span
+            className="dashboard-brand-pulso"
+            aria-hidden="true"
+          />
 
           <div>
             <small>
@@ -67,22 +121,24 @@ function Dashboard() {
             </small>
 
             <strong>
-              PORTAL ESTUDIANTIL
+              {administrador
+                ? "PORTAL ADMINISTRATIVO"
+                : "PORTAL ESTUDIANTIL"}
             </strong>
           </div>
         </div>
 
         <div className="dashboard-header-actions">
           <div className="dashboard-session">
-            <span />
-
-            SESIÓN ACTIVA
+            <span aria-hidden="true" />
+            SESIÓN INICIADA
           </div>
 
           <button
             type="button"
             className="dashboard-logout"
             onClick={manejarCerrarSesion}
+            disabled={transicionActiva}
           >
             CERRAR SESIÓN
           </button>
@@ -93,26 +149,28 @@ function Dashboard() {
         <div className="dashboard-welcome">
           <div className="dashboard-welcome-copy">
             <p className="dashboard-kicker">
-              NODO PRINCIPAL · ACCESO AUTORIZADO
+              NODO PRINCIPAL · PANEL PERSONAL
             </p>
 
             <h1>
               Bienvenido,
               <strong>
-                {sesion?.nombreCompleto ||
-                  "Estudiante"}
+                {sesion?.nombreCompleto || "Usuario"}
               </strong>
             </h1>
 
             <p className="dashboard-description">
-              Consulta oportunidades de beca y
-              accede a los servicios disponibles
-              desde tu panel académico.
+              {administrador
+                ? "Administra las convocatorias y revisa las oportunidades publicadas desde un mismo panel."
+                : "Consulta oportunidades de beca y accede a los servicios disponibles desde tu panel académico."}
             </p>
           </div>
 
           <div className="dashboard-identity">
-            <div className="dashboard-avatar">
+            <div
+              className="dashboard-avatar"
+              aria-hidden="true"
+            >
               <span>
                 {obtenerIniciales(
                   sesion?.nombreCompleto
@@ -122,12 +180,11 @@ function Dashboard() {
 
             <div className="dashboard-user-data">
               <small>
-                PERFIL AUTENTICADO
+                PERFIL DE LA SESIÓN
               </small>
 
               <strong>
-                {sesion?.nombreCompleto ||
-                  "Estudiante"}
+                {sesion?.nombreCompleto || "Usuario"}
               </strong>
 
               <span>
@@ -136,8 +193,7 @@ function Dashboard() {
               </span>
 
               <p>
-                ROL ·{" "}
-                {sesion?.rol || "ESTUDIANTE"}
+                ROL · {sesion?.rol || "Sin definir"}
               </p>
             </div>
           </div>
@@ -153,133 +209,93 @@ function Dashboard() {
               Centro de operaciones
             </h2>
           </div>
-
-          <span>
-            SISTEMA EN LÍNEA
-            <i />
-          </span>
         </div>
 
-        <section className="dashboard-modules">
-          <article className="dashboard-module dashboard-module-active">
-            <div className="dashboard-module-top">
-              <span className="dashboard-module-code">
-                01
-              </span>
+        <section
+          className="dashboard-modules"
+          aria-label="Módulos del sistema"
+        >
+          {modulos.map((modulo, indice) => {
+            const disponible = Boolean(modulo.ruta);
 
-              <span className="dashboard-module-status">
-                <i />
-                DISPONIBLE
-              </span>
-            </div>
+            return (
+              <article
+                key={modulo.titulo}
+                className={`dashboard-module ${
+                  disponible
+                    ? "dashboard-module-active"
+                    : "dashboard-module-disabled"
+                }`}
+              >
+                <div className="dashboard-module-top">
+                  <span className="dashboard-module-code">
+                    {String(indice + 1).padStart(2, "0")}
+                  </span>
 
-            <div className="dashboard-module-symbol">
-              <div>
-                <span />
-              </div>
-            </div>
+                  <span className="dashboard-module-status">
+                    {disponible && (
+                      <i aria-hidden="true" />
+                    )}
 
-            <div className="dashboard-module-copy">
-              <small>
-                EXPLORACIÓN ACADÉMICA
-              </small>
+                    {disponible
+                      ? "DISPONIBLE"
+                      : "EN DESARROLLO"}
+                  </span>
+                </div>
 
-              <h3>
-                Convocatorias
-              </h3>
+                {disponible ? (
+                  <div
+                    className="dashboard-module-symbol"
+                    aria-hidden="true"
+                  >
+                    <div>
+                      <span />
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    className="dashboard-module-placeholder"
+                    aria-hidden="true"
+                  >
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                )}
 
-              <p>
-                Consulta las oportunidades de beca
-                publicadas, sus fechas, requisitos y
-                condiciones.
-              </p>
-            </div>
+                <div className="dashboard-module-copy">
+                  <small>
+                    {modulo.categoria}
+                  </small>
 
-            <button
-              type="button"
-              onClick={abrirConvocatorias}
-            >
-              EXPLORAR CONVOCATORIAS
+                  <h3>
+                    {modulo.titulo}
+                  </h3>
 
-              <span>→</span>
-            </button>
-          </article>
+                  <p>
+                    {modulo.descripcion}
+                  </p>
+                </div>
 
-          <article className="dashboard-module dashboard-module-disabled">
-            <div className="dashboard-module-top">
-              <span className="dashboard-module-code">
-                02
-              </span>
-
-              <span className="dashboard-module-status">
-                EN DESARROLLO
-              </span>
-            </div>
-
-            <div className="dashboard-module-placeholder">
-              <span />
-              <span />
-              <span />
-            </div>
-
-            <div className="dashboard-module-copy">
-              <small>
-                GESTIÓN DE PROCESOS
-              </small>
-
-              <h3>
-                Mis solicitudes
-              </h3>
-
-              <p>
-                Este módulo permitirá administrar
-                solicitudes y consultar el avance de
-                cada proceso de beca.
-              </p>
-            </div>
-
-            <div className="dashboard-module-soon">
-              PRÓXIMAMENTE
-            </div>
-          </article>
-
-          <article className="dashboard-module dashboard-module-disabled">
-            <div className="dashboard-module-top">
-              <span className="dashboard-module-code">
-                03
-              </span>
-
-              <span className="dashboard-module-status">
-                EN DESARROLLO
-              </span>
-            </div>
-
-            <div className="dashboard-module-placeholder">
-              <span />
-              <span />
-              <span />
-            </div>
-
-            <div className="dashboard-module-copy">
-              <small>
-                SEGUIMIENTO ACADÉMICO
-              </small>
-
-              <h3>
-                Estado del proceso
-              </h3>
-
-              <p>
-                Permitirá visualizar el estado y los
-                cambios asociados a las solicitudes
-                registradas.
-              </p>
-            </div>
-
-            <div className="dashboard-module-soon">
-              PRÓXIMAMENTE
-            </div>
-          </article>
+                {disponible ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      abrirModulo(modulo.ruta)
+                    }
+                    disabled={transicionActiva}
+                  >
+                    {modulo.accion}
+                    <span aria-hidden="true">→</span>
+                  </button>
+                ) : (
+                  <div className="dashboard-module-soon">
+                    PRÓXIMAMENTE
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </section>
 
         <footer className="dashboard-footer">
@@ -288,8 +304,8 @@ function Dashboard() {
           </span>
 
           <div>
-            <i />
-            CONEXIÓN SEGURA
+            <i aria-hidden="true" />
+            PORTAL ACADÉMICO
           </div>
         </footer>
       </section>

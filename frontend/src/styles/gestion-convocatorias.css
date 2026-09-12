@@ -1,0 +1,1161 @@
+/* =========================================================
+   GESTIÓN ADMINISTRATIVA DE CONVOCATORIAS
+   Estilos independientes con el prefijo ga-
+   ========================================================= */
+
+.ga-page,
+.ga-dialog {
+  --ga-bg: #031014;
+  --ga-panel: #071b20;
+  --ga-text: #edf9f5;
+  --ga-muted: #a0b8b8;
+  --ga-cyan: #55eee2;
+  --ga-gold: #dcb76b;
+  --ga-jade: #72dfbd;
+  --ga-red: #ffb4a8;
+  --ga-line: rgba(85, 238, 226, 0.2);
+
+  color: var(--ga-text);
+  font-family: inherit;
+}
+
+.ga-page *,
+.ga-dialog *,
+.ga-page *::before,
+.ga-page *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   PÁGINA Y FONDO
+   ========================================================= */
+
+.ga-page {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+
+  background:
+    radial-gradient(
+      ellipse at 95% 5%,
+      rgba(37, 139, 127, 0.14),
+      transparent 40%
+    ),
+    linear-gradient(
+      rgba(85, 238, 226, 0.023) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(85, 238, 226, 0.023) 1px,
+      transparent 1px
+    ),
+    var(--ga-bg);
+
+  background-size:
+    auto,
+    52px 52px,
+    52px 52px,
+    auto;
+}
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.ga-header {
+  min-height: 88px;
+  padding: 20px max(24px, 5vw);
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+
+  border-bottom: 1px solid var(--ga-line);
+  background: rgba(1, 11, 15, 0.8);
+}
+
+.ga-brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ga-brand > span {
+  width: 9px;
+  height: 9px;
+
+  background: var(--ga-gold);
+  box-shadow: 0 0 18px #dcb76b66;
+  transform: rotate(45deg);
+}
+
+.ga-brand div {
+  display: grid;
+  gap: 5px;
+}
+
+.ga-brand small {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  color: var(--ga-cyan);
+}
+
+.ga-brand strong {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--ga-gold);
+}
+
+.ga-back {
+  color: var(--ga-muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.ga-back:hover {
+  color: var(--ga-cyan);
+}
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+   ========================================================= */
+
+.ga-shell {
+  width: min(1390px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: 60px 0 30px;
+}
+
+.ga-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 36px;
+  margin-bottom: 38px;
+}
+
+.ga-eyebrow {
+  margin: 0 0 17px;
+  font-size: 0.69rem;
+  letter-spacing: 0.18em;
+  color: var(--ga-gold);
+}
+
+.ga-hero h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 4.8vw, 4.9rem);
+  line-height: 1.04;
+  letter-spacing: -0.055em;
+  font-weight: 300;
+}
+
+.ga-hero h1 strong {
+  display: block;
+  font-weight: 650;
+  color: var(--ga-cyan);
+}
+
+.ga-lead {
+  max-width: 620px;
+  margin: 22px 0 0;
+  color: var(--ga-muted);
+  font-size: 0.97rem;
+  line-height: 1.75;
+}
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.ga-button {
+  min-height: 43px;
+  padding: 11px 17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--ga-line);
+  background: rgba(85, 238, 226, 0.035);
+  color: var(--ga-text);
+
+  font: inherit;
+  font-size: 0.81rem;
+  font-weight: 500;
+
+  cursor: pointer;
+  text-decoration: none;
+
+  transition:
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.ga-button:hover {
+  border-color: var(--ga-cyan);
+  background: rgba(85, 238, 226, 0.08);
+}
+
+.ga-button-primary {
+  border-color: var(--ga-cyan);
+  background: var(--ga-cyan);
+  color: #02201f;
+  font-weight: 700;
+}
+
+.ga-button-primary:hover {
+  background: #88fff3;
+  color: #02201f;
+}
+
+.ga-button-danger {
+  border-color: #ed8e7877;
+  color: var(--ga-red);
+  background: #ff9a8610;
+}
+
+.ga-new {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 27px;
+  min-height: 51px;
+}
+
+.ga-new span {
+  font-size: 1.35rem;
+}
+
+.ga-page button:disabled,
+.ga-dialog button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.ga-page button:disabled:hover,
+.ga-dialog button:disabled:hover {
+  filter: none;
+}
+
+.ga-page :is(button, a, input, select):focus-visible,
+.ga-dialog :is(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--ga-cyan);
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   RESUMEN POR ESTADO
+   ========================================================= */
+
+.ga-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.ga-stat {
+  position: relative;
+  padding: 22px 24px;
+
+  display: grid;
+  gap: 13px;
+
+  border: 1px solid var(--ga-line);
+  background: #071b20cc;
+}
+
+.ga-stat::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 24px;
+  width: 40px;
+  height: 2px;
+  background: var(--ga-cyan);
+}
+
+.ga-stat-borrador::before {
+  background: var(--ga-gold);
+}
+
+.ga-stat-cerrada::before {
+  background: #9eadae;
+}
+
+.ga-stat small {
+  color: var(--ga-muted);
+  font-size: 0.9rem;
+}
+
+.ga-stat strong {
+  color: var(--ga-text);
+  font-size: 2.25rem;
+  line-height: 1;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.ga-stat span {
+  color: var(--ga-muted);
+  font-size: 0.59rem;
+  letter-spacing: 0.13em;
+}
+
+/* =========================================================
+   BUSCADOR Y FILTROS
+   ========================================================= */
+
+.ga-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 18px;
+
+  padding: 22px 0;
+  border-top: 1px solid var(--ga-line);
+  border-bottom: 1px solid var(--ga-line);
+}
+
+.ga-search {
+  flex: 1;
+  min-width: 190px;
+  display: grid;
+  gap: 8px;
+}
+
+.ga-page .ga-search {
+  min-width: 0;
+}
+
+.ga-search label {
+  color: var(--ga-muted);
+  font-size: 0.8rem;
+}
+
+.ga-search input,
+.ga-field input,
+.ga-field select,
+.ga-field textarea {
+  width: 100%;
+  min-height: 45px;
+
+  border: 1px solid #325158;
+  border-radius: 0;
+  padding: 11px 13px;
+
+  background: #031216;
+  color: var(--ga-text);
+
+  font: inherit;
+  font-size: 0.92rem;
+  color-scheme: dark;
+}
+
+.ga-search input::placeholder,
+.ga-field input::placeholder,
+.ga-field textarea::placeholder {
+  color: #859fa1;
+}
+
+.ga-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ga-filters button {
+  min-height: 45px;
+  padding: 10px 14px;
+
+  background: transparent;
+  color: var(--ga-muted);
+  border: 1px solid var(--ga-line);
+
+  font: inherit;
+  font-size: 0.79rem;
+  cursor: pointer;
+}
+
+.ga-filters button.activo {
+  background: #55eee217;
+  border-color: var(--ga-cyan);
+  color: var(--ga-cyan);
+}
+
+.ga-results {
+  margin: 24px 0 14px;
+  color: var(--ga-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+}
+
+/* =========================================================
+   TABLA ADMINISTRATIVA
+   ========================================================= */
+
+.ga-table-wrap {
+  border: 1px solid var(--ga-line);
+  background: #06171ccc;
+  overflow-x: auto;
+}
+
+.ga-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ga-table thead {
+  background: #0b252a;
+}
+
+.ga-table thead th {
+  padding: 17px 20px;
+
+  font-size: 0.65rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+
+  color: var(--ga-muted);
+  font-weight: 500;
+}
+
+.ga-table tbody th,
+.ga-table td {
+  padding: 24px 20px;
+  border-top: 1px solid var(--ga-line);
+  vertical-align: middle;
+}
+
+.ga-table tbody th {
+  width: 36%;
+  font-weight: 500;
+}
+
+.ga-table tbody th strong {
+  display: block;
+  margin-top: 9px;
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ga-code {
+  color: var(--ga-gold);
+  font-size: 0.67rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+.ga-table tbody tr:hover {
+  background: #55eee204;
+}
+
+.ga-benefit-preview {
+  margin: 9px 0 0;
+  color: var(--ga-muted);
+
+  font-size: 0.81rem;
+  line-height: 1.6;
+  font-weight: 400;
+
+  display: -webkit-box;
+-webkit-line-clamp: 2;
+line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   FECHAS Y ETIQUETAS DE ESTADO
+   ========================================================= */
+
+.ga-dates {
+  display: grid;
+  gap: 8px;
+  min-width: 160px;
+  font-size: 0.72rem;
+}
+
+.ga-dates span {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: var(--ga-muted);
+}
+
+.ga-dates b {
+  color: #daebe8;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.ga-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 7px 9px;
+  border: 1px solid #4d606a;
+
+  color: #c0cdce;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.ga-badge i {
+  width: 5px;
+  height: 5px;
+  background: currentColor;
+  border-radius: 50%;
+}
+
+.ga-badge-publicada {
+  color: var(--ga-jade);
+  border-color: #72dfbd44;
+  background: #72dfbd08;
+}
+
+.ga-badge-borrador {
+  color: var(--ga-gold);
+  border-color: #dcb76b55;
+  background: #dcb76b08;
+}
+
+/* =========================================================
+   ACCIONES DE CADA CONVOCATORIA
+   ========================================================= */
+
+.ga-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-width: 182px;
+}
+
+.ga-row-actions button {
+  padding: 9px 10px;
+  min-height: 40px;
+
+  font: inherit;
+  font-size: 0.75rem;
+
+  background: transparent;
+  border: 1px solid #355159;
+  color: #dae9e7;
+
+  cursor: pointer;
+}
+
+.ga-row-actions button:hover {
+  border-color: var(--ga-cyan);
+  color: var(--ga-cyan);
+}
+
+.ga-row-actions .ga-row-publish {
+  color: var(--ga-jade);
+  border-color: #72dfbd55;
+}
+
+.ga-row-actions .ga-row-close {
+  color: var(--ga-red);
+  border-color: #ffb4a844;
+}
+
+/* =========================================================
+   CARGA Y LISTADO VACÍO
+   ========================================================= */
+
+.ga-empty {
+  min-height: 270px;
+  margin-top: 24px;
+  padding: 44px 25px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  text-align: center;
+  border: 1px solid var(--ga-line);
+  background: #06171caa;
+}
+
+.ga-empty h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.ga-empty p {
+  margin: 0;
+  max-width: 540px;
+  color: var(--ga-muted);
+  line-height: 1.65;
+}
+
+.ga-empty-symbol {
+  font-size: 3rem;
+  color: var(--ga-gold);
+}
+
+.ga-spinner {
+  width: 28px;
+  height: 28px;
+
+  border: 1px solid var(--ga-cyan);
+  border-right-color: var(--ga-gold);
+
+  animation: ga-girar 1.5s linear infinite;
+}
+
+.ga-loading {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 0;
+  color: var(--ga-muted);
+}
+
+/* =========================================================
+   MENSAJES Y CONFIRMACIONES
+   ========================================================= */
+
+.ga-notice {
+  padding: 17px 19px;
+  margin: 20px 0;
+
+  border: 1px solid var(--ga-line);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.ga-notice p {
+  margin: 6px 0 0;
+}
+
+.ga-notice strong {
+  font-weight: 600;
+}
+
+.ga-notice-success {
+  color: #a2f2d8;
+  background: #72dfbd0b;
+  border-color: #72dfbd44;
+}
+
+.ga-notice-warning {
+  color: #f0d7a5;
+  background: #dcb76b09;
+  border-color: #dcb76b44;
+}
+
+.ga-notice-error {
+  color: #ffc9c0;
+  background: #ffb4a80a;
+  border-color: #ffb4a844;
+}
+
+.ga-notice ul {
+  padding-left: 20px;
+}
+
+.ga-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* =========================================================
+   PIE DE PÁGINA
+   ========================================================= */
+
+.ga-footer {
+  margin-top: 32px;
+  padding: 22px 0;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+
+  border-top: 1px solid var(--ga-line);
+  color: var(--ga-muted);
+
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   MODAL NATIVO
+   ========================================================= */
+
+.ga-dialog {
+  box-sizing: border-box;
+
+  width: min(760px, calc(100vw - 32px));
+  max-height: 90vh;
+  max-height: 90dvh;
+
+  margin: auto;
+  padding: 32px;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  border: 1px solid #407475;
+
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      #15525133,
+      transparent 50%
+    ),
+    #06171d;
+
+  box-shadow: 0 24px 100px #0009;
+  scrollbar-color: #34625f #06171d;
+}
+
+.ga-dialog[open] {
+  animation: ga-entrada 160ms ease-out;
+}
+
+.ga-dialog::backdrop {
+  background: #01090cd9;
+  backdrop-filter: blur(8px);
+}
+
+.ga-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 22px;
+
+  padding-bottom: 22px;
+  margin-bottom: 20px;
+
+  border-bottom: 1px solid var(--ga-line);
+}
+
+.ga-dialog-head h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.15rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+}
+
+.ga-icon-button {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+
+  background: transparent;
+  border: 1px solid var(--ga-line);
+  color: var(--ga-text);
+
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.ga-dialog p,
+.ga-dialog dd {
+  overflow-wrap: anywhere;
+}
+
+.ga-dialog h2:focus-visible,
+.ga-notice:focus-visible {
+  outline: 1px solid var(--ga-gold);
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+
+.ga-help {
+  color: var(--ga-muted);
+  line-height: 1.7;
+  font-size: 0.83rem;
+  margin: 0 0 23px;
+}
+
+.ga-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 21px;
+}
+
+.ga-fields:disabled {
+  opacity: 0.64;
+}
+
+.ga-field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ga-field-wide {
+  grid-column: 1 / -1;
+}
+
+.ga-field label {
+  color: #c0d3d0;
+  font-size: 0.82rem;
+}
+
+.ga-field label span {
+  color: var(--ga-gold);
+}
+
+.ga-field textarea {
+  resize: vertical;
+  min-height: 132px;
+  line-height: 1.7;
+}
+
+.ga-field :is(input, select, textarea)[aria-invalid="true"] {
+  border-color: var(--ga-red);
+}
+
+.ga-field-error {
+  color: var(--ga-red);
+  font-size: 0.8rem;
+}
+
+.ga-field-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  font-size: 0.73rem;
+  color: var(--ga-muted);
+}
+
+.ga-field-meta small {
+  font-size: inherit;
+}
+
+.ga-dialog-foot {
+  margin-top: 25px;
+  padding-top: 22px;
+  border-top: 1px solid var(--ga-line);
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* =========================================================
+   DETALLE DE CONVOCATORIA
+   ========================================================= */
+
+.ga-detail-top {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ga-detail-title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.25;
+  font-weight: 400;
+
+  margin: 23px 0;
+  overflow-wrap: anywhere;
+}
+
+.ga-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ga-detail-grid > div {
+  padding: 16px;
+  border: 1px solid var(--ga-line);
+  background: #55eee203;
+}
+
+.ga-detail-grid dt {
+  color: var(--ga-cyan);
+  font-size: 0.69rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ga-detail-grid dd {
+  margin: 9px 0 0;
+  font-size: 0.85rem;
+}
+
+.ga-requisitos {
+  margin-top: 24px;
+}
+
+.ga-requisitos h4 {
+  color: var(--ga-gold);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ga-requisitos p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+
+  color: var(--ga-muted);
+  line-height: 1.8;
+  font-size: 0.91rem;
+}
+
+/* =========================================================
+   BENEFICIO Y DATOS DE SOLO LECTURA
+   ========================================================= */
+
+.ga-beneficio {
+  padding: 18px 21px;
+  border-left: 2px solid var(--ga-jade);
+  background: #72dfbd09;
+}
+
+.ga-beneficio h4 {
+  color: var(--ga-jade);
+  margin-top: 0;
+}
+
+.ga-beneficio p {
+  margin-bottom: 0;
+}
+
+.ga-readonly {
+  padding-top: 16px;
+  border-top: 1px solid var(--ga-line);
+}
+
+.ga-readonly small {
+  color: var(--ga-muted);
+  font-size: 0.77rem;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   TEXTO PARA LECTORES DE PANTALLA
+   ========================================================= */
+
+.ga-sr-only {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  padding: 0;
+  margin: -1px;
+
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+@keyframes ga-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ga-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1020px) {
+  .ga-hero {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .ga-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .ga-search {
+    flex-basis: 100%;
+  }
+
+  .ga-filters {
+    flex: 1;
+  }
+}
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .ga-header {
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .ga-brand small {
+    font-size: 0.59rem;
+  }
+
+  .ga-back {
+    font-size: 0.74rem;
+  }
+
+  .ga-shell {
+    width: calc(100% - 32px);
+    padding-top: 38px;
+  }
+
+  .ga-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ga-stat {
+    padding: 19px;
+  }
+
+  .ga-stat span {
+    font-size: 0.54rem;
+  }
+
+  .ga-toolbar {
+    align-items: stretch;
+  }
+
+  .ga-toolbar > .ga-button {
+    width: 100%;
+  }
+
+  .ga-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .ga-table-wrap {
+    border: 0;
+    background: none;
+    overflow: visible;
+  }
+
+  .ga-table,
+  .ga-table tbody {
+    display: block;
+  }
+
+  .ga-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .ga-table tbody tr {
+    display: block;
+    margin-bottom: 14px;
+    padding: 18px;
+
+    border: 1px solid var(--ga-line);
+    background: #06171ccc;
+  }
+
+  .ga-table tbody th,
+  .ga-table td {
+    display: block;
+    width: auto;
+    padding: 13px 0;
+    border: 0;
+  }
+
+  .ga-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 10px;
+
+    font-size: 0.67rem;
+    letter-spacing: 0.1em;
+    color: var(--ga-muted);
+    text-transform: uppercase;
+  }
+
+  .ga-dates {
+    max-width: 280px;
+  }
+
+  .ga-row-actions {
+    flex-wrap: wrap;
+  }
+
+  .ga-dialog {
+    padding: 23px;
+  }
+
+  .ga-fields,
+  .ga-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ga-dialog-foot {
+    flex-wrap: wrap;
+  }
+
+  .ga-dialog-foot .ga-button,
+  .ga-row-actions button {
+    min-height: 44px;
+  }
+
+  .ga-footer {
+    flex-direction: column;
+  }
+}
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .ga-spinner,
+  .ga-dialog[open] {
+    animation: none;
+  }
+
+  .ga-button {
+    transition: none;
+  }
+}
