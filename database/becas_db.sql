@@ -97,3 +97,28 @@ FROM convocatorias c
 LEFT JOIN solicitudes s ON s.convocatoria_id = c.id
 WHERE c.estado = 'PUBLICADA'
 GROUP BY c.id;
+
+
+-- ==========================================
+-- MÓDULO DE COMITÉS EVALUADORES (HU-08)
+-- ==========================================
+
+CREATE TABLE comites (
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    tipo_beca VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE comite_miembros (
+    id BIGSERIAL PRIMARY KEY,
+    comite_id BIGINT NOT NULL REFERENCES comites(id) ON DELETE CASCADE,
+    estudiante_id BIGINT NOT NULL REFERENCES estudiantes(id) ON DELETE CASCADE,
+    UNIQUE (comite_id, estudiante_id)
+);
+
+CREATE INDEX idx_comite_miembros_comite ON comite_miembros(comite_id);
+CREATE INDEX idx_comite_miembros_estudiante ON comite_miembros(estudiante_id);
+
+-- Relación: solicitudes pueden tener un comité asignado
+ALTER TABLE solicitudes ADD COLUMN comite_id BIGINT REFERENCES comites(id) ON DELETE SET NULL;
+CREATE INDEX idx_solicitudes_comite ON solicitudes(comite_id);
