@@ -78,4 +78,12 @@ public class SolicitudController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PutMapping("/{id}/asignar/{comiteId}")
+    public ResponseEntity<?> asignarComite(@PathVariable Long id, @PathVariable Long comiteId) {
+        try {
+            return ResponseEntity.ok(solicitudService.asignarComite(id, comiteId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
