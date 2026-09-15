@@ -35,6 +35,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/convocatorias/**").hasRole("ADMINISTRADOR")
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/*/evaluar", "/api/solicitudes/*/aprobar", "/api/solicitudes/*/rechazar").hasRole("ADMINISTRADOR")
                 .requestMatchers(HttpMethod.GET, "/api/convocatorias/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/comites/**").hasRole("ADMINISTRADOR")
+                .requestMatchers(HttpMethod.PUT, "/api/solicitudes/*/asignar/**").hasRole("ADMINISTRADOR")
+               // .requestMatchers(HttpMethod.POST, "/api/comites/**").hasRole("ADMINISTRADOR")
+               // .requestMatchers(HttpMethod.GET, "/api/comites/**").hasAnyRole("ADMINISTRADOR", "ESTUDIANTE")
 
                 // Estudiantes: listar todos, solo ADMIn
                 .requestMatchers(HttpMethod.GET, "/api/estudiantes").hasRole("ADMINISTRADOR")

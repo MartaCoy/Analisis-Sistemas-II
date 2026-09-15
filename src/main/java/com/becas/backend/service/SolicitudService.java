@@ -72,4 +72,10 @@ public class SolicitudService {
         solicitud.setEstado(nuevoEstado);
         return solicitudRepository.save(solicitud);
     }
+    public Solicitud asignarComite(Long id, Long comiteId) {
+        Solicitud solicitud = solicitudRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("La solicitud no existe."));
+        solicitud.setComiteId(comiteId);
+        return solicitudRepository.save(solicitud);
+    }
 }
