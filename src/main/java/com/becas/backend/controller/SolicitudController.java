@@ -51,4 +51,31 @@ public class SolicitudController {
                 .orElseThrow(() -> new IllegalStateException("Estudiante no encontrado."));
         return estudiante.getId();
     }
+    
+    @PutMapping("/{id}/evaluar")
+    public ResponseEntity<?> evaluar(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(solicitudService.evaluar(id));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/aprobar")
+    public ResponseEntity<?> aprobar(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(solicitudService.aprobar(id));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/rechazar")
+    public ResponseEntity<?> rechazar(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(solicitudService.rechazar(id));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

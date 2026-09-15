@@ -33,6 +33,7 @@ public class SecurityConfig {
                 // Convocatorias: crear/publicar/cerrar solo ADMIN, cualquiera logueado
                 .requestMatchers(HttpMethod.POST, "/api/convocatorias").hasRole("ADMINISTRADOR")
                 .requestMatchers(HttpMethod.PUT, "/api/convocatorias/**").hasRole("ADMINISTRADOR")
+                .requestMatchers(HttpMethod.PUT, "/api/solicitudes/*/evaluar", "/api/solicitudes/*/aprobar", "/api/solicitudes/*/rechazar").hasRole("ADMINISTRADOR")
                 .requestMatchers(HttpMethod.GET, "/api/convocatorias/**").authenticated()
 
                 // Estudiantes: listar todos, solo ADMIn
