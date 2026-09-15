@@ -9,13 +9,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
 
-@Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -34,7 +32,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 String correo = jwtService.extraerCorreo(token);
                 String rol = jwtService.extraerRol(token);
 
-                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + rol));
+                if (rol == null || rol.isBlank()) {
+                    rol = "ESTUDIANTE";
+                }
+                String rolLimpio = rol.startsWith("ROLE_") ? rol.substring(5) : rol;
+
+                List<GrantedAuthority> authorities = List.of(
+                        new SimpleGrantedAuthority(rolLimpio),
+                        new SimpleGrantedAuthority("ROLE_" + rolLimpio)
+                );
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(correo, null, authorities);

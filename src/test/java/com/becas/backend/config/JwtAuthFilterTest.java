@@ -86,8 +86,9 @@ class JwtAuthFilterTest {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         assertThat(auth.getAuthorities())
-                .extracting(GrantedAuthority::getAuthority)
-                .containsExactly("ROLE_" + rol);
+        .extracting(GrantedAuthority::getAuthority)
+        .containsExactlyInAnyOrder(rol, "ROLE_" + rol);
+                
     }
 
     @Test
