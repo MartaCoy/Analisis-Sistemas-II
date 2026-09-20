@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ComiteMiembroRepository extends JpaRepository<ComiteMiembro, Long> {
     List<ComiteMiembro> findByComiteId(Long comiteId);
+    boolean existsByComiteIdAndEstudianteId(Long comiteId, Long estudianteId);
 }
