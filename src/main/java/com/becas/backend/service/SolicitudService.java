@@ -19,6 +19,9 @@ public class SolicitudService {
 
     @Autowired
     private ConvocatoriaRepository convocatoriaRepository;
+    
+    @Autowired
+    private com.becas.backend.repository.HistorialEstadoSolicitudRepository historialRepository;
 
     public List<Solicitud> listarPorEstudiante(Long estudianteId) {
         return solicitudRepository.findByEstudianteId(estudianteId);
@@ -77,5 +80,9 @@ public class SolicitudService {
                 .orElseThrow(() -> new IllegalArgumentException("La solicitud no existe."));
         solicitud.setComiteId(comiteId);
         return solicitudRepository.save(solicitud);
+    }
+    
+    public List<com.becas.backend.model.HistorialEstadoSolicitud> obtenerHistorial(Long solicitudId) {
+        return historialRepository.findBySolicitudIdOrderByFechaCambioAsc(solicitudId);
     }
 }
