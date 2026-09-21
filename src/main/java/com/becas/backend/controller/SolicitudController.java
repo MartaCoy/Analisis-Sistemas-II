@@ -86,4 +86,9 @@ public class SolicitudController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    
+    @GetMapping("/{id}/historial")
+    public List<com.becas.backend.model.HistorialEstadoSolicitud> historial(@PathVariable Long id) {
+        return solicitudService.obtenerHistorial(id);
+    }
 }

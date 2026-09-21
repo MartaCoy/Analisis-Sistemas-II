@@ -122,3 +122,17 @@ CREATE INDEX idx_comite_miembros_estudiante ON comite_miembros(estudiante_id);
 -- Relación: solicitudes pueden tener un comité asignado
 ALTER TABLE solicitudes ADD COLUMN comite_id BIGINT REFERENCES comites(id) ON DELETE SET NULL;
 CREATE INDEX idx_solicitudes_comite ON solicitudes(comite_id);
+
+
+CREATE TABLE evaluaciones (
+    id BIGSERIAL PRIMARY KEY,
+    solicitud_id BIGINT NOT NULL REFERENCES solicitudes(id) ON DELETE CASCADE,
+    evaluador_id BIGINT NOT NULL REFERENCES estudiantes(id) ON DELETE CASCADE,
+    puntaje INTEGER NOT NULL CHECK (puntaje BETWEEN 0 AND 100),
+    observaciones VARCHAR(1000),
+    fecha_evaluacion TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (solicitud_id, evaluador_id)
+);
+
+CREATE INDEX idx_evaluaciones_solicitud ON evaluaciones(solicitud_id);
+CREATE INDEX idx_evaluaciones_evaluador ON evaluaciones(evaluador_id);
