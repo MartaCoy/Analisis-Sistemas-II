@@ -9,6 +9,7 @@ import Registro from "./pages/Registro.jsx";
 import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Convocatorias from "./pages/Convocatorias.jsx";
+import SolicitudBeca from "./pages/SolicitudBeca.jsx";
 
 import GestionConvocatorias from "./pages/admin/GestionConvocatorias.jsx";
 
@@ -23,13 +24,10 @@ import {
   obtenerSesion,
 } from "./services/authService.js";
 
-/*
- * Controla qué pantalla se muestra según la sesión.
- * Los permisos reales de cada petición los valida el backend.
- */
 function RutaProtegida({
   children,
   soloAdministrador = false,
+  soloEstudiante = false,
 }) {
   if (!estaAutenticado()) {
     return (
@@ -40,9 +38,24 @@ function RutaProtegida({
     );
   }
 
+  const rol =
+    obtenerSesion()?.rol;
+
   if (
     soloAdministrador &&
-    obtenerSesion()?.rol !== "ADMINISTRADOR"
+    rol !== "ADMINISTRADOR"
+  ) {
+    return (
+      <Navigate
+        to="/dashboard"
+        replace
+      />
+    );
+  }
+
+  if (
+    soloEstudiante &&
+    rol !== "ESTUDIANTE"
   ) {
     return (
       <Navigate
@@ -90,6 +103,15 @@ function App() {
           element={
             <RutaProtegida>
               <Convocatorias />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/convocatorias/:id/solicitar"
+          element={
+            <RutaProtegida soloEstudiante>
+              <SolicitudBeca />
             </RutaProtegida>
           }
         />

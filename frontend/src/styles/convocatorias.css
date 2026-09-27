@@ -1053,3 +1053,45 @@
     animation: none;
   }
 }
+
+.conv-modal-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.conv-modal-acciones button {
+  min-height: 46px;
+}
+
+.conv-modal-acciones .conv-solicitar {
+  border-color: #57ddc6;
+  color: #031614;
+  background: #5de2cc;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+
+.conv-modal-acciones .conv-solicitar:hover:not(:disabled) {
+  color: #02110f;
+  background: #75ecd8;
+  box-shadow:
+    0 10px 28px rgba(77, 221, 197, 0.16);
+}
+
+.conv-modal-acciones .conv-solicitar:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+@media (max-width: 620px) {
+  .conv-modal-acciones {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .conv-modal-acciones button {
+    width: 100%;
+  }
+}
