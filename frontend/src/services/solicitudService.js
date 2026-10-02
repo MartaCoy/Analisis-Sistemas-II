@@ -336,3 +336,25 @@ export async function listarDocumentos(
 
   return datos;
 }
+export async function obtenerHistorialSolicitud(
+  solicitudId,
+  { signal } = {}
+) {
+  const id = validarId(
+    solicitudId,
+    "identificador de la solicitud"
+  );
+
+  const datos = await solicitar(
+    `/${id}/historial`,
+    { signal }
+  );
+
+  if (!Array.isArray(datos)) {
+    throw crearError(
+      "El servidor no devolvió un historial válido."
+    );
+  }
+
+  return datos;
+}

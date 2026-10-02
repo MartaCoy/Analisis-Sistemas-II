@@ -1,0 +1,373 @@
+.mis-solicitudes-page {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(27, 207, 218, 0.12),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 25%,
+      rgba(232, 184, 82, 0.08),
+      transparent 30%
+    ),
+    #071014;
+  color: #f3f6f7;
+}
+
+.mis-solicitudes-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
+    );
+  background-size: 42px 42px;
+}
+
+.mis-solicitudes-header {
+  position: relative;
+  z-index: 2;
+  min-height: 86px;
+  padding: 0 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(148, 175, 183, 0.16);
+  background: rgba(6, 15, 19, 0.84);
+  backdrop-filter: blur(18px);
+}
+
+.mis-solicitudes-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.mis-solicitudes-brand small,
+.mis-solicitudes-heading p,
+.mis-solicitudes-resumen small,
+.mis-solicitudes-card small {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: #7f9ba2;
+}
+
+.mis-solicitudes-brand strong {
+  color: #18d3df;
+  letter-spacing: 0.09em;
+}
+
+.mis-solicitudes-back,
+.mis-solicitudes-refresh,
+.mis-solicitudes-message button {
+  border: 1px solid rgba(24, 211, 223, 0.38);
+  background: rgba(13, 43, 49, 0.7);
+  color: #bcf8fc;
+  border-radius: 10px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.mis-solicitudes-back:hover,
+.mis-solicitudes-refresh:hover,
+.mis-solicitudes-message button:hover {
+  transform: translateY(-2px);
+  border-color: #18d3df;
+  background: rgba(18, 70, 78, 0.82);
+}
+
+.mis-solicitudes-back:disabled,
+.mis-solicitudes-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mis-solicitudes-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 90vw);
+  margin: 0 auto;
+  padding: 58px 0 80px;
+}
+
+.mis-solicitudes-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 34px;
+}
+
+.mis-solicitudes-heading p {
+  margin: 0 0 10px;
+  color: #18d3df;
+}
+
+.mis-solicitudes-heading h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1;
+}
+
+.mis-solicitudes-heading span {
+  display: block;
+  max-width: 680px;
+  margin-top: 16px;
+  color: #9eb0b5;
+  line-height: 1.65;
+}
+
+.mis-solicitudes-resumen {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.mis-solicitudes-resumen article {
+  padding: 20px;
+  border: 1px solid rgba(135, 165, 173, 0.16);
+  border-radius: 14px;
+  background: rgba(11, 25, 30, 0.74);
+}
+
+.mis-solicitudes-resumen strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.8rem;
+  color: #e8b852;
+}
+
+.mis-solicitudes-lista {
+  display: grid;
+  gap: 18px;
+}
+
+.mis-solicitudes-card {
+  position: relative;
+  padding: 26px;
+  border: 1px solid rgba(132, 164, 171, 0.18);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(14, 30, 35, 0.96),
+      rgba(8, 20, 24, 0.92)
+    );
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.mis-solicitudes-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(24, 211, 223, 0.4);
+}
+
+.mis-solicitudes-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 25px;
+}
+
+.mis-solicitudes-card h2 {
+  margin: 7px 0 0;
+  font-size: 1.35rem;
+}
+
+.mis-solicitudes-estado {
+  padding: 8px 12px;
+  border: 1px solid rgba(24, 211, 223, 0.32);
+  border-radius: 999px;
+  background: rgba(24, 211, 223, 0.08);
+  color: #65edf4;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.estado-aprobada {
+  border-color: rgba(66, 211, 146, 0.4);
+  background: rgba(66, 211, 146, 0.1);
+  color: #70e6ad;
+}
+
+.estado-rechazada {
+  border-color: rgba(246, 96, 96, 0.4);
+  background: rgba(246, 96, 96, 0.1);
+  color: #ff9090;
+}
+
+.estado-en-evaluacion {
+  border-color: rgba(232, 184, 82, 0.4);
+  background: rgba(232, 184, 82, 0.1);
+  color: #e8b852;
+}
+
+.mis-solicitudes-card-data {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(128, 155, 162, 0.12);
+}
+
+.mis-solicitudes-card-data div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mis-solicitudes-card-data strong {
+  font-size: 0.95rem;
+  color: #dce5e7;
+}
+
+.mis-solicitudes-card-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 24px;
+  color: #687f85;
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+}
+
+.mis-solicitudes-message {
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  border: 1px dashed rgba(131, 164, 172, 0.26);
+  border-radius: 18px;
+  background: rgba(9, 22, 27, 0.74);
+}
+
+.mis-solicitudes-message strong {
+  font-size: 1.25rem;
+}
+
+.mis-solicitudes-message p {
+  max-width: 520px;
+  color: #8fa4aa;
+  line-height: 1.6;
+}
+
+.mis-solicitudes-message.error {
+  border-color: rgba(246, 96, 96, 0.28);
+}
+
+.mis-solicitudes-loader {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 20px;
+  border: 3px solid rgba(24, 211, 223, 0.18);
+  border-top-color: #18d3df;
+  border-radius: 50%;
+  animation: mis-solicitudes-spin 0.7s linear infinite;
+}
+
+@keyframes mis-solicitudes-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 800px) {
+  .mis-solicitudes-resumen {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mis-solicitudes-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mis-solicitudes-card-data {
+    grid-template-columns: 1fr;
+  }
+
+  .mis-solicitudes-card-footer {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .mis-solicitudes-header {
+    padding: 18px 5vw;
+    align-items: flex-start;
+    gap: 15px;
+    flex-direction: column-reverse;
+  }
+
+  .mis-solicitudes-brand {
+    align-items: flex-start;
+  }
+
+  .mis-solicitudes-resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .mis-solicitudes-card-top {
+    flex-direction: column;
+  }
+}
+
+.mis-solicitudes-expediente {
+  width: 100%;
+  margin-top: 24px;
+  padding: 13px 18px;
+  border: 1px solid rgba(24, 211, 223, 0.34);
+  border-radius: 10px;
+  background: rgba(24, 211, 223, 0.07);
+  color: #6cecf4;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.mis-solicitudes-expediente:hover {
+  transform: translateY(-2px);
+  background: rgba(24, 211, 223, 0.13);
+  border-color: #18d3df;
+}
+
+.mis-solicitudes-expediente:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}

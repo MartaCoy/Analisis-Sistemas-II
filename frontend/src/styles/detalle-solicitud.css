@@ -1,0 +1,313 @@
+.detalle-solicitud-page {
+  min-height: 100vh;
+  position: relative;
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(27, 207, 218, 0.12),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 35%,
+      rgba(232, 184, 82, 0.07),
+      transparent 30%
+    ),
+    #071014;
+  color: #f3f6f7;
+}
+
+.detalle-solicitud-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
+    );
+  background-size: 42px 42px;
+}
+
+.detalle-solicitud-header {
+  position: relative;
+  z-index: 2;
+  min-height: 86px;
+  padding: 0 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(148, 175, 183, 0.16);
+  background: rgba(6, 15, 19, 0.84);
+  backdrop-filter: blur(18px);
+}
+
+.detalle-solicitud-back {
+  border: 1px solid rgba(24, 211, 223, 0.38);
+  background: rgba(13, 43, 49, 0.7);
+  color: #bcf8fc;
+  border-radius: 10px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.detalle-solicitud-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.detalle-solicitud-brand small,
+.detalle-solicitud-section-title p,
+.detalle-solicitud-datos small {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  color: #7f9ba2;
+}
+
+.detalle-solicitud-brand strong {
+  color: #18d3df;
+  letter-spacing: 0.1em;
+}
+
+.detalle-solicitud-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 90vw);
+  margin: 0 auto;
+  padding: 58px 0 80px;
+}
+
+.detalle-solicitud-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.detalle-solicitud-heading p {
+  color: #18d3df;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+}
+
+.detalle-solicitud-heading h1 {
+  margin: 8px 0;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+}
+
+.detalle-solicitud-heading span {
+  color: #92a6ab;
+}
+
+.detalle-solicitud-estado {
+  padding: 10px 15px;
+  border: 1px solid rgba(24, 211, 223, 0.35);
+  border-radius: 999px;
+  background: rgba(24, 211, 223, 0.08);
+  color: #65edf4 !important;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.detalle-solicitud-datos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.detalle-solicitud-datos article {
+  padding: 20px;
+  border: 1px solid rgba(135, 165, 173, 0.17);
+  border-radius: 14px;
+  background: rgba(11, 25, 30, 0.78);
+}
+
+.detalle-solicitud-datos strong {
+  display: block;
+  margin-top: 10px;
+  color: #e8b852;
+}
+
+.detalle-solicitud-panel {
+  margin-top: 20px;
+  padding: 28px;
+  border: 1px solid rgba(135, 165, 173, 0.17);
+  border-radius: 16px;
+  background: rgba(9, 22, 27, 0.82);
+}
+
+.detalle-solicitud-section-title p {
+  color: #18d3df;
+  margin-bottom: 5px;
+}
+
+.detalle-solicitud-section-title h2 {
+  margin: 0 0 24px;
+}
+
+.detalle-solicitud-documentos {
+  display: grid;
+  gap: 12px;
+}
+
+.detalle-solicitud-documentos article {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid rgba(132, 164, 171, 0.14);
+  border-radius: 12px;
+  background: rgba(13, 29, 34, 0.78);
+}
+
+.detalle-documento-icon {
+  min-width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(24, 211, 223, 0.35);
+  border-radius: 10px;
+  color: #18d3df;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.detalle-solicitud-documentos article > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.detalle-solicitud-documentos small {
+  color: #18d3df;
+  letter-spacing: 0.1em;
+}
+
+.detalle-solicitud-documentos span {
+  color: #758c92;
+  font-size: 0.78rem;
+}
+
+.detalle-solicitud-historial {
+  display: grid;
+}
+
+.detalle-solicitud-historial article {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 18px;
+  min-height: 82px;
+}
+
+.detalle-historial-linea {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.detalle-historial-linea::after {
+  content: "";
+  position: absolute;
+  top: 34px;
+  bottom: -10px;
+  width: 1px;
+  background: rgba(24, 211, 223, 0.24);
+}
+
+.detalle-solicitud-historial article:last-child
+.detalle-historial-linea::after {
+  display: none;
+}
+
+.detalle-historial-linea span {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(24, 211, 223, 0.4);
+  color: #18d3df;
+  font-size: 0.67rem;
+}
+
+.detalle-solicitud-historial small {
+  display: block;
+  margin-bottom: 5px;
+  color: #71888e;
+}
+
+.detalle-solicitud-empty,
+.detalle-solicitud-message {
+  padding: 28px;
+  text-align: center;
+  color: #84999e;
+}
+
+.detalle-solicitud-message {
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.detalle-solicitud-message.error {
+  color: #ff9090;
+}
+
+.detalle-solicitud-loader {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 18px;
+  border: 3px solid rgba(24, 211, 223, 0.16);
+  border-top-color: #18d3df;
+  border-radius: 50%;
+  animation: detalle-spin 0.7s linear infinite;
+}
+
+@keyframes detalle-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 850px) {
+  .detalle-solicitud-datos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .detalle-solicitud-heading {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .detalle-solicitud-datos {
+    grid-template-columns: 1fr;
+  }
+
+  .detalle-solicitud-header {
+    padding: 18px 5vw;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .detalle-solicitud-brand {
+    align-items: flex-start;
+  }
+}

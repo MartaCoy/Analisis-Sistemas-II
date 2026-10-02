@@ -63,7 +63,9 @@ function Dashboard() {
       titulo: "Mis solicitudes",
       categoria: "GESTIÓN DE PROCESOS",
       descripcion:
-        "Este módulo permitirá administrar solicitudes y consultar el avance de cada proceso de beca.",
+        "Consulta tus solicitudes registradas y revisa el estado actual de cada proceso de beca.",
+      ruta: administrador ? undefined : "/mis-solicitudes",
+      accion: "VER MIS SOLICITUDES",
     },
 
     {
