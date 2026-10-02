@@ -10,6 +10,8 @@ import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Convocatorias from "./pages/Convocatorias.jsx";
 import SolicitudBeca from "./pages/SolicitudBeca.jsx";
+import MisSolicitudes from "./pages/MisSolicitudes.jsx";
+import DetalleSolicitud from "./pages/DetalleSolicitud.jsx";
 
 import GestionConvocatorias from "./pages/admin/GestionConvocatorias.jsx";
 
@@ -112,6 +114,24 @@ function App() {
           element={
             <RutaProtegida soloEstudiante>
               <SolicitudBeca />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/mis-solicitudes"
+          element={
+            <RutaProtegida soloEstudiante>
+              <MisSolicitudes />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/mis-solicitudes/:id"
+          element={
+            <RutaProtegida soloEstudiante>
+              <DetalleSolicitud />
             </RutaProtegida>
           }
         />
