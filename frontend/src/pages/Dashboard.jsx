@@ -55,6 +55,14 @@ function Dashboard() {
             ruta: "/admin/panel-evaluador",
             accion: "ABRIR BANDEJA",
           },
+          {
+            titulo: "Reportes y estadísticas",
+            categoria: "ANÁLISIS Y CONTROL",
+            descripcion:
+              "Visualiza indicadores institucionales, becas otorgadas y estadísticas del proceso.",
+            ruta: "/admin/reportes",
+            accion: "VER REPORTES",
+          },
         ]
       : []),
 

@@ -16,6 +16,7 @@ import DetalleSolicitud from "./pages/DetalleSolicitud.jsx";
 import GestionConvocatorias from "./pages/admin/GestionConvocatorias.jsx";
 import PanelEvaluador from "./pages/admin/PanelEvaluador.jsx";
 import EvaluarSolicitud from "./pages/admin/EvaluarSolicitud.jsx";
+import ReportesEstadisticas from "./pages/admin/ReportesEstadisticas.jsx";
 
 import GlyphTrail from "./components/GlyphTrail.jsx";
 
@@ -152,6 +153,15 @@ function App() {
           element={
             <RutaProtegida soloAdministrador>
               <EvaluarSolicitud />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/admin/reportes"
+          element={
+            <RutaProtegida soloAdministrador>
+              <ReportesEstadisticas />
             </RutaProtegida>
           }
         />
