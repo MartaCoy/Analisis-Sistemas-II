@@ -5,6 +5,7 @@ import {
 } from "react";
 
 import {
+  DEMO_REPORTES_HABILITADA,
   obtenerReporteBecas,
   REPORTE_DEMO,
 } from "../../services/reportesService.js";
@@ -192,6 +193,10 @@ function ReportesEstadisticas() {
   ]);
 
   function activarDemo() {
+    if (!DEMO_REPORTES_HABILITADA) {
+      return;
+    }
+
     setBusqueda("");
     setTipoBeca("TODAS");
     setFechaDesde("");
@@ -407,18 +412,29 @@ function ReportesEstadisticas() {
               no existe en la rama principal.
             </p>
 
-            <button
-              type="button"
-              className="rep-btn rep-btn-primary"
-              onClick={activarDemo}
-            >
-              VER DEMOSTRACIÓN
-            </button>
+            {DEMO_REPORTES_HABILITADA ? (
+              <>
+                <button
+                  type="button"
+                  className="rep-btn rep-btn-primary"
+                  onClick={activarDemo}
+                >
+                  VER DEMOSTRACIÓN
+                </button>
 
-            <small>
-              Los datos de demostración son locales
-              y no representan información oficial.
-            </small>
+                <small>
+                  Los datos de demostración son locales
+                  y no representan información oficial.
+                </small>
+              </>
+            ) : (
+              <small>
+                El modo demostración está deshabilitado
+                en esta compilación. La vista quedará
+                activa cuando HU-12 Backend esté
+                configurado.
+              </small>
+            )}
           </section>
         )}
 
