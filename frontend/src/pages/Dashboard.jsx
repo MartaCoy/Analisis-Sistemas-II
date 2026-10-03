@@ -47,6 +47,14 @@ function Dashboard() {
             ruta: "/admin/convocatorias",
             accion: "GESTIONAR CONVOCATORIAS",
           },
+          {
+            titulo: "Panel de evaluador",
+            categoria: "COMITÉS Y EVALUACIONES",
+            descripcion:
+              "Consulta los expedientes asignados a los comités a los que perteneces.",
+            ruta: "/admin/panel-evaluador",
+            accion: "ABRIR BANDEJA",
+          },
         ]
       : []),
 
