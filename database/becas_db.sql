@@ -1,77 +1,52 @@
--- ==========================================
--- TABLAS BASE
--- ========================================== 
+--
+-- PostgreSQL database dump
+--
 
-CREATE TABLE universidades (
-    id BIGSERIAL PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    siglas VARCHAR(20),
-    pais VARCHAR(100) NOT NULL DEFAULT 'Guatemala',
-    activa BOOLEAN NOT NULL DEFAULT TRUE
-);
+\restrict fJJ4cdaZEvaHrDS8p2mzSjqvsnitTZaEihMeDzmU8YuGeYdmlQUAddlchrtiHp1
 
-INSERT INTO universidades (nombre, siglas, pais) VALUES
-('Universidad Mariano Gálvez', 'UMG', 'Guatemala');
+-- Dumped from database version 18.4
+-- Dumped by pg_dump version 18.4
 
-CREATE TABLE estudiantes (
-    id BIGSERIAL PRIMARY KEY,
-    nombre_completo VARCHAR(255) NOT NULL,
-    correo VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    carnet VARCHAR(50) NOT NULL,
-    rol VARCHAR(30) NOT NULL DEFAULT 'ESTUDIANTE',
-    universidad_id BIGINT NOT NULL REFERENCES universidades(id),
-    UNIQUE (universidad_id, carnet)
-);
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
 
-CREATE TABLE convocatorias (
-    id BIGSERIAL PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    tipo_beca VARCHAR(30) NOT NULL,
-    requisitos VARCHAR(1000),
-    fecha_apertura DATE,
-    fecha_cierre DATE,
-    estado VARCHAR(20) NOT NULL DEFAULT 'BORRADOR'
-);
+--
+-- Name: asignar_comite_solicitud(); Type: FUNCTION; Schema: public; Owner: postgres
+--
 
-CREATE TABLE solicitudes (
-    id BIGSERIAL PRIMARY KEY,
-    estudiante_id BIGINT NOT NULL REFERENCES estudiantes(id),
-    convocatoria_id BIGINT NOT NULL REFERENCES convocatorias(id),
-    estado VARCHAR(30) NOT NULL DEFAULT 'RECIBIDA',
-    fecha_solicitud TIMESTAMP NOT NULL DEFAULT now(),
-    UNIQUE (estudiante_id, convocatoria_id)
-);
+CREATE FUNCTION public.asignar_comite_solicitud() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF NEW.comite_id IS NULL THEN
+        SELECT MIN(c.id) INTO NEW.comite_id
+        FROM comites c
+        JOIN convocatorias cv ON cv.tipo_beca = c.tipo_beca
+        WHERE cv.id = NEW.convocatoria_id;
+    END IF;
+    RETURN NEW;
+END;
+$$;
 
-CREATE TABLE documentos (
-    id BIGSERIAL PRIMARY KEY,
-    solicitud_id BIGINT NOT NULL REFERENCES solicitudes(id),
-    nombre_archivo VARCHAR(255) NOT NULL,
-    url_s3 VARCHAR(500) NOT NULL,
-    tipo_documento VARCHAR(100),
-    fecha_carga TIMESTAMP NOT NULL DEFAULT now()
-);
 
--- ==========================================
--- HISTORIAL DE ESTADOS (para el disparador)
--- ==========================================
+ALTER FUNCTION public.asignar_comite_solicitud() OWNER TO postgres;
 
-CREATE TABLE historial_estados_solicitud (
-    id BIGSERIAL PRIMARY KEY,
-    solicitud_id BIGINT NOT NULL REFERENCES solicitudes(id),
-    estado_anterior VARCHAR(30),
-    estado_nuevo VARCHAR(30) NOT NULL,
-    fecha_cambio TIMESTAMP NOT NULL DEFAULT now()
-);
+--
+-- Name: registrar_cambio_estado_solicitud(); Type: FUNCTION; Schema: public; Owner: postgres
+--
 
--- ==========================================
--- DISPARADOR (TRIGGER)
--- Cada vez que cambia el estado de una solicitud,
--- se guarda automáticamente en el historial.
--- ==========================================
-
-CREATE OR REPLACE FUNCTION registrar_cambio_estado_solicitud()
-RETURNS TRIGGER AS $$
+CREATE FUNCTION public.registrar_cambio_estado_solicitud() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
 BEGIN
     IF OLD.estado IS DISTINCT FROM NEW.estado THEN
         INSERT INTO historial_estados_solicitud (solicitud_id, estado_anterior, estado_nuevo)
@@ -79,60 +54,624 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_historial_solicitud
-AFTER UPDATE ON solicitudes
-FOR EACH ROW
-EXECUTE FUNCTION registrar_cambio_estado_solicitud();
-
--- ==========================================
--- VISTA
--- Convocatorias activas + conteo de solicitudes
--- ==========================================
-
-CREATE VIEW vista_convocatorias_activas AS
-SELECT c.*, COUNT(s.id) AS total_solicitudes
-FROM convocatorias c
-LEFT JOIN solicitudes s ON s.convocatoria_id = c.id
-WHERE c.estado = 'PUBLICADA'
-GROUP BY c.id;
+$$;
 
 
--- ==========================================
--- MÓDULO DE COMITÉS EVALUADORES (HU-08)
--- ==========================================
+ALTER FUNCTION public.registrar_cambio_estado_solicitud() OWNER TO postgres;
 
-CREATE TABLE comites (
-    id BIGSERIAL PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    tipo_beca VARCHAR(30) NOT NULL
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: comite_miembros; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.comite_miembros (
+    id bigint NOT NULL,
+    comite_id bigint NOT NULL,
+    estudiante_id bigint NOT NULL
 );
 
-CREATE TABLE comite_miembros (
-    id BIGSERIAL PRIMARY KEY,
-    comite_id BIGINT NOT NULL REFERENCES comites(id) ON DELETE CASCADE,
-    estudiante_id BIGINT NOT NULL REFERENCES estudiantes(id) ON DELETE CASCADE,
-    UNIQUE (comite_id, estudiante_id)
+
+ALTER TABLE public.comite_miembros OWNER TO postgres;
+
+--
+-- Name: comite_miembros_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.comite_miembros_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.comite_miembros_id_seq OWNER TO postgres;
+
+--
+-- Name: comite_miembros_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.comite_miembros_id_seq OWNED BY public.comite_miembros.id;
+
+
+--
+-- Name: comites; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.comites (
+    id bigint NOT NULL,
+    nombre character varying(255) NOT NULL,
+    tipo_beca character varying(255) NOT NULL
 );
 
-CREATE INDEX idx_comite_miembros_comite ON comite_miembros(comite_id);
-CREATE INDEX idx_comite_miembros_estudiante ON comite_miembros(estudiante_id);
 
--- Relación: solicitudes pueden tener un comité asignado
-ALTER TABLE solicitudes ADD COLUMN comite_id BIGINT REFERENCES comites(id) ON DELETE SET NULL;
-CREATE INDEX idx_solicitudes_comite ON solicitudes(comite_id);
+ALTER TABLE public.comites OWNER TO postgres;
+
+--
+-- Name: comites_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.comites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
-CREATE TABLE evaluaciones (
-    id BIGSERIAL PRIMARY KEY,
-    solicitud_id BIGINT NOT NULL REFERENCES solicitudes(id) ON DELETE CASCADE,
-    evaluador_id BIGINT NOT NULL REFERENCES estudiantes(id) ON DELETE CASCADE,
-    puntaje INTEGER NOT NULL CHECK (puntaje BETWEEN 0 AND 100),
-    observaciones VARCHAR(1000),
-    fecha_evaluacion TIMESTAMP NOT NULL DEFAULT NOW(),
-    UNIQUE (solicitud_id, evaluador_id)
+ALTER SEQUENCE public.comites_id_seq OWNER TO postgres;
+
+--
+-- Name: comites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.comites_id_seq OWNED BY public.comites.id;
+
+
+--
+-- Name: convocatorias; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.convocatorias (
+    id bigint NOT NULL,
+    estado character varying(255) NOT NULL,
+    fecha_apertura date,
+    fecha_cierre date,
+    nombre character varying(255) NOT NULL,
+    requisitos character varying(1000),
+    tipo_beca character varying(255) NOT NULL,
+    documentos_requeridos character varying(255),
+    beneficio character varying(500)
 );
 
-CREATE INDEX idx_evaluaciones_solicitud ON evaluaciones(solicitud_id);
-CREATE INDEX idx_evaluaciones_evaluador ON evaluaciones(evaluador_id);
+
+ALTER TABLE public.convocatorias OWNER TO postgres;
+
+--
+-- Name: convocatorias_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.convocatorias ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.convocatorias_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: documentos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.documentos (
+    id bigint NOT NULL,
+    solicitud_id bigint NOT NULL,
+    nombre_archivo character varying(255) NOT NULL,
+    url_s3 character varying(255) NOT NULL,
+    tipo_documento character varying(255),
+    fecha_carga timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public.documentos OWNER TO postgres;
+
+--
+-- Name: documentos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.documentos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.documentos_id_seq OWNER TO postgres;
+
+--
+-- Name: documentos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.documentos_id_seq OWNED BY public.documentos.id;
+
+
+--
+-- Name: estudiantes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.estudiantes (
+    id bigint NOT NULL,
+    carnet character varying(255) NOT NULL,
+    correo character varying(255) NOT NULL,
+    nombre_completo character varying(255) NOT NULL,
+    password character varying(255) NOT NULL,
+    rol character varying(255) NOT NULL,
+    universidad_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.estudiantes OWNER TO postgres;
+
+--
+-- Name: estudiantes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.estudiantes ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.estudiantes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: evaluaciones; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.evaluaciones (
+    id bigint NOT NULL,
+    solicitud_id bigint NOT NULL,
+    evaluador_id bigint NOT NULL,
+    puntaje integer NOT NULL,
+    observaciones character varying(1000),
+    fecha_evaluacion timestamp without time zone DEFAULT now() NOT NULL,
+    CONSTRAINT evaluaciones_puntaje_check CHECK (((puntaje >= 0) AND (puntaje <= 100)))
+);
+
+
+ALTER TABLE public.evaluaciones OWNER TO postgres;
+
+--
+-- Name: evaluaciones_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.evaluaciones_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.evaluaciones_id_seq OWNER TO postgres;
+
+--
+-- Name: evaluaciones_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.evaluaciones_id_seq OWNED BY public.evaluaciones.id;
+
+
+--
+-- Name: historial_estados_solicitud; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.historial_estados_solicitud (
+    id bigint NOT NULL,
+    solicitud_id bigint NOT NULL,
+    estado_anterior character varying(255),
+    estado_nuevo character varying(255) NOT NULL,
+    fecha_cambio timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public.historial_estados_solicitud OWNER TO postgres;
+
+--
+-- Name: historial_estados_solicitud_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.historial_estados_solicitud_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.historial_estados_solicitud_id_seq OWNER TO postgres;
+
+--
+-- Name: historial_estados_solicitud_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.historial_estados_solicitud_id_seq OWNED BY public.historial_estados_solicitud.id;
+
+
+--
+-- Name: solicitudes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.solicitudes (
+    id bigint NOT NULL,
+    estudiante_id bigint NOT NULL,
+    convocatoria_id bigint NOT NULL,
+    estado character varying(255) DEFAULT 'RECIBIDA'::character varying NOT NULL,
+    fecha_solicitud timestamp without time zone DEFAULT now() NOT NULL,
+    comite_id bigint
+);
+
+
+ALTER TABLE public.solicitudes OWNER TO postgres;
+
+--
+-- Name: solicitudes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.solicitudes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.solicitudes_id_seq OWNER TO postgres;
+
+--
+-- Name: solicitudes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.solicitudes_id_seq OWNED BY public.solicitudes.id;
+
+
+--
+-- Name: universidades; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.universidades (
+    id bigint NOT NULL,
+    nombre character varying(255) NOT NULL,
+    siglas character varying(20),
+    pais character varying(100) DEFAULT 'Guatemala'::character varying NOT NULL,
+    activa boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.universidades OWNER TO postgres;
+
+--
+-- Name: universidades_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.universidades_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.universidades_id_seq OWNER TO postgres;
+
+--
+-- Name: universidades_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.universidades_id_seq OWNED BY public.universidades.id;
+
+
+--
+-- Name: vista_convocatorias_activas; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.vista_convocatorias_activas AS
+SELECT
+    NULL::bigint AS id,
+    NULL::character varying(255) AS estado,
+    NULL::date AS fecha_apertura,
+    NULL::date AS fecha_cierre,
+    NULL::character varying(255) AS nombre,
+    NULL::character varying(1000) AS requisitos,
+    NULL::character varying(255) AS tipo_beca,
+    NULL::bigint AS total_solicitudes;
+
+
+ALTER VIEW public.vista_convocatorias_activas OWNER TO postgres;
+
+--
+-- Name: comite_miembros id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comite_miembros ALTER COLUMN id SET DEFAULT nextval('public.comite_miembros_id_seq'::regclass);
+
+
+--
+-- Name: comites id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comites ALTER COLUMN id SET DEFAULT nextval('public.comites_id_seq'::regclass);
+
+
+--
+-- Name: documentos id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.documentos ALTER COLUMN id SET DEFAULT nextval('public.documentos_id_seq'::regclass);
+
+
+--
+-- Name: evaluaciones id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.evaluaciones ALTER COLUMN id SET DEFAULT nextval('public.evaluaciones_id_seq'::regclass);
+
+
+--
+-- Name: historial_estados_solicitud id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.historial_estados_solicitud ALTER COLUMN id SET DEFAULT nextval('public.historial_estados_solicitud_id_seq'::regclass);
+
+
+--
+-- Name: solicitudes id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.solicitudes ALTER COLUMN id SET DEFAULT nextval('public.solicitudes_id_seq'::regclass);
+
+
+--
+-- Name: universidades id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.universidades ALTER COLUMN id SET DEFAULT nextval('public.universidades_id_seq'::regclass);
+
+
+--
+-- Name: comite_miembros comite_miembros_comite_id_estudiante_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comite_miembros
+    ADD CONSTRAINT comite_miembros_comite_id_estudiante_id_key UNIQUE (comite_id, estudiante_id);
+
+
+--
+-- Name: comite_miembros comite_miembros_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comite_miembros
+    ADD CONSTRAINT comite_miembros_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: comites comites_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comites
+    ADD CONSTRAINT comites_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: convocatorias convocatorias_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.convocatorias
+    ADD CONSTRAINT convocatorias_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: documentos documentos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.documentos
+    ADD CONSTRAINT documentos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: estudiantes estudiantes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.estudiantes
+    ADD CONSTRAINT estudiantes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evaluaciones evaluaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.evaluaciones
+    ADD CONSTRAINT evaluaciones_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: evaluaciones evaluaciones_solicitud_id_evaluador_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.evaluaciones
+    ADD CONSTRAINT evaluaciones_solicitud_id_evaluador_id_key UNIQUE (solicitud_id, evaluador_id);
+
+
+--
+-- Name: historial_estados_solicitud historial_estados_solicitud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.historial_estados_solicitud
+    ADD CONSTRAINT historial_estados_solicitud_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solicitudes solicitudes_estudiante_id_convocatoria_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.solicitudes
+    ADD CONSTRAINT solicitudes_estudiante_id_convocatoria_id_key UNIQUE (estudiante_id, convocatoria_id);
+
+
+--
+-- Name: solicitudes solicitudes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.solicitudes
+    ADD CONSTRAINT solicitudes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: estudiantes ukgsu7a7h4e5f9mt9dndi8772ba; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.estudiantes
+    ADD CONSTRAINT ukgsu7a7h4e5f9mt9dndi8772ba UNIQUE (correo);
+
+
+--
+-- Name: universidades universidades_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.universidades
+    ADD CONSTRAINT universidades_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: idx_evaluaciones_evaluador; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_evaluaciones_evaluador ON public.evaluaciones USING btree (evaluador_id);
+
+
+--
+-- Name: idx_evaluaciones_solicitud; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_evaluaciones_solicitud ON public.evaluaciones USING btree (solicitud_id);
+
+
+--
+-- Name: vista_convocatorias_activas _RETURN; Type: RULE; Schema: public; Owner: postgres
+--
+
+CREATE OR REPLACE VIEW public.vista_convocatorias_activas AS
+ SELECT c.id,
+    c.estado,
+    c.fecha_apertura,
+    c.fecha_cierre,
+    c.nombre,
+    c.requisitos,
+    c.tipo_beca,
+    count(s.id) AS total_solicitudes
+   FROM (public.convocatorias c
+     LEFT JOIN public.solicitudes s ON ((s.convocatoria_id = c.id)))
+  WHERE ((c.estado)::text = 'PUBLICADA'::text)
+  GROUP BY c.id;
+
+
+--
+-- Name: solicitudes trigger_asignar_comite; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER trigger_asignar_comite BEFORE INSERT ON public.solicitudes FOR EACH ROW EXECUTE FUNCTION public.asignar_comite_solicitud();
+
+
+--
+-- Name: solicitudes trigger_historial_solicitud; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER trigger_historial_solicitud AFTER UPDATE ON public.solicitudes FOR EACH ROW EXECUTE FUNCTION public.registrar_cambio_estado_solicitud();
+
+
+--
+-- Name: comite_miembros comite_miembros_comite_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comite_miembros
+    ADD CONSTRAINT comite_miembros_comite_id_fkey FOREIGN KEY (comite_id) REFERENCES public.comites(id);
+
+
+--
+-- Name: comite_miembros comite_miembros_estudiante_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comite_miembros
+    ADD CONSTRAINT comite_miembros_estudiante_id_fkey FOREIGN KEY (estudiante_id) REFERENCES public.estudiantes(id);
+
+
+--
+-- Name: documentos documentos_solicitud_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.documentos
+    ADD CONSTRAINT documentos_solicitud_id_fkey FOREIGN KEY (solicitud_id) REFERENCES public.solicitudes(id);
+
+
+--
+-- Name: evaluaciones evaluaciones_evaluador_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.evaluaciones
+    ADD CONSTRAINT evaluaciones_evaluador_id_fkey FOREIGN KEY (evaluador_id) REFERENCES public.estudiantes(id);
+
+
+--
+-- Name: evaluaciones evaluaciones_solicitud_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.evaluaciones
+    ADD CONSTRAINT evaluaciones_solicitud_id_fkey FOREIGN KEY (solicitud_id) REFERENCES public.solicitudes(id);
+
+
+--
+-- Name: historial_estados_solicitud historial_estados_solicitud_solicitud_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.historial_estados_solicitud
+    ADD CONSTRAINT historial_estados_solicitud_solicitud_id_fkey FOREIGN KEY (solicitud_id) REFERENCES public.solicitudes(id);
+
+
+--
+-- Name: solicitudes solicitudes_comite_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.solicitudes
+    ADD CONSTRAINT solicitudes_comite_id_fkey FOREIGN KEY (comite_id) REFERENCES public.comites(id);
+
+
+--
+-- Name: solicitudes solicitudes_convocatoria_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.solicitudes
+    ADD CONSTRAINT solicitudes_convocatoria_id_fkey FOREIGN KEY (convocatoria_id) REFERENCES public.convocatorias(id);
+
+
+--
+-- Name: solicitudes solicitudes_estudiante_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.solicitudes
+    ADD CONSTRAINT solicitudes_estudiante_id_fkey FOREIGN KEY (estudiante_id) REFERENCES public.estudiantes(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict fJJ4cdaZEvaHrDS8p2mzSjqvsnitTZaEihMeDzmU8YuGeYdmlQUAddlchrtiHp1
+
