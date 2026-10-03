@@ -52,28 +52,49 @@ public class SolicitudService {
     public Solicitud obtener(Long id) {
         return solicitudRepository.findById(id).orElse(null);
     }
+    @org.springframework.transaction.annotation.Transactional
     public Solicitud evaluar(Long id) {
         return cambiarEstado(id, com.becas.backend.service.estado.EstadoSolicitud::evaluar);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public Solicitud aprobar(Long id) {
         return cambiarEstado(id, com.becas.backend.service.estado.EstadoSolicitud::aprobar);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public Solicitud rechazar(Long id) {
         return cambiarEstado(id, com.becas.backend.service.estado.EstadoSolicitud::rechazar);
     }
 
-    private Solicitud cambiarEstado(Long id, java.util.function.Function<com.becas.backend.service.estado.EstadoSolicitud, String> transicion) {
+    private Solicitud cambiarEstado(
+            Long id,
+            java.util.function.Function<com.becas.backend.service.estado.EstadoSolicitud, String> transicion) {
+
         Solicitud solicitud = solicitudRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La solicitud no existe."));
 
+        String estadoAnterior = solicitud.getEstado();
+
         com.becas.backend.service.estado.EstadoSolicitud estadoActual =
-                com.becas.backend.service.estado.EstadoSolicitudFactory.obtener(solicitud.getEstado());
+                com.becas.backend.service.estado.EstadoSolicitudFactory.obtener(estadoAnterior);
 
         String nuevoEstado = transicion.apply(estadoActual);
+
         solicitud.setEstado(nuevoEstado);
-        return solicitudRepository.save(solicitud);
+        Solicitud guardada = solicitudRepository.save(solicitud);
+
+        com.becas.backend.model.HistorialEstadoSolicitud historial =
+                new com.becas.backend.model.HistorialEstadoSolicitud();
+
+        historial.setSolicitudId(guardada.getId());
+        historial.setEstadoAnterior(estadoAnterior);
+        historial.setEstadoNuevo(nuevoEstado);
+        historial.setFechaCambio(java.time.LocalDateTime.now());
+
+        historialRepository.save(historial);
+
+        return guardada;
     }
     public Solicitud asignarComite(Long id, Long comiteId) {
         Solicitud solicitud = solicitudRepository.findById(id)
@@ -84,5 +105,10 @@ public class SolicitudService {
     
     public List<com.becas.backend.model.HistorialEstadoSolicitud> obtenerHistorial(Long solicitudId) {
         return historialRepository.findBySolicitudIdOrderByFechaCambioAsc(solicitudId);
+    }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<Solicitud> listarAsignadasParaEvaluador(Long evaluadorId) {
+        return solicitudRepository.listarAsignadasParaEvaluador(evaluadorId);
     }
 }

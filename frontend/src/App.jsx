@@ -14,6 +14,8 @@ import MisSolicitudes from "./pages/MisSolicitudes.jsx";
 import DetalleSolicitud from "./pages/DetalleSolicitud.jsx";
 
 import GestionConvocatorias from "./pages/admin/GestionConvocatorias.jsx";
+import PanelEvaluador from "./pages/admin/PanelEvaluador.jsx";
+import EvaluarSolicitud from "./pages/admin/EvaluarSolicitud.jsx";
 
 import GlyphTrail from "./components/GlyphTrail.jsx";
 
@@ -132,6 +134,24 @@ function App() {
           element={
             <RutaProtegida soloEstudiante>
               <DetalleSolicitud />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/admin/panel-evaluador"
+          element={
+            <RutaProtegida soloAdministrador>
+              <PanelEvaluador />
+            </RutaProtegida>
+          }
+        />
+
+        <Route
+          path="/admin/panel-evaluador/solicitudes/:id"
+          element={
+            <RutaProtegida soloAdministrador>
+              <EvaluarSolicitud />
             </RutaProtegida>
           }
         />
