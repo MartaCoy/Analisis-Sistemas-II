@@ -4,6 +4,14 @@ const API_URL = String(
   import.meta.env.VITE_REPORTES_API_URL || ""
 ).trim();
 
+export const DEMO_REPORTES_HABILITADA =
+  import.meta.env.DEV &&
+  String(
+    import.meta.env.VITE_ENABLE_REPORTES_DEMO || ""
+  )
+    .trim()
+    .toLowerCase() === "true";
+
 function crearError(mensaje, codigo = "ERROR_REPORTE") {
   const error = new Error(mensaje);
   error.codigo = codigo;

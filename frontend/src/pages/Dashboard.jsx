@@ -35,62 +35,52 @@ function Dashboard() {
   const administrador =
     sesion?.rol === "ADMINISTRADOR";
 
-  // Solo los módulos con una ruta tienen una acción disponible.
-  const modulos = [
-    ...(administrador
-      ? [
-          {
-            titulo: "Gestión de convocatorias",
-            categoria: "ADMINISTRACIÓN",
-            descripcion:
-              "Define beneficios y requisitos, prepara borradores y controla la publicación y el cierre de convocatorias.",
-            ruta: "/admin/convocatorias",
-            accion: "GESTIONAR CONVOCATORIAS",
-          },
-          {
-            titulo: "Panel de evaluador",
-            categoria: "COMITÉS Y EVALUACIONES",
-            descripcion:
-              "Consulta los expedientes asignados a los comités a los que perteneces.",
-            ruta: "/admin/panel-evaluador",
-            accion: "ABRIR BANDEJA",
-          },
-          {
-            titulo: "Reportes y estadísticas",
-            categoria: "ANÁLISIS Y CONTROL",
-            descripcion:
-              "Visualiza indicadores institucionales, becas otorgadas y estadísticas del proceso.",
-            ruta: "/admin/reportes",
-            accion: "VER REPORTES",
-          },
-        ]
-      : []),
-
-    {
-      titulo: "Convocatorias",
-      categoria: "EXPLORACIÓN ACADÉMICA",
-      descripcion:
-        "Consulta las oportunidades de beca publicadas, sus fechas, requisitos y condiciones.",
-      ruta: "/convocatorias",
-      accion: "EXPLORAR CONVOCATORIAS",
-    },
-
-    {
-      titulo: "Mis solicitudes",
-      categoria: "GESTIÓN DE PROCESOS",
-      descripcion:
-        "Consulta tus solicitudes registradas y revisa el estado actual de cada proceso de beca.",
-      ruta: administrador ? undefined : "/mis-solicitudes",
-      accion: "VER MIS SOLICITUDES",
-    },
-
-    {
-      titulo: "Estado del proceso",
-      categoria: "SEGUIMIENTO ACADÉMICO",
-      descripcion:
-        "Permitirá visualizar el estado y los cambios asociados a las solicitudes registradas.",
-    },
-  ];
+  // Los módulos disponibles dependen del rol de la sesión.
+  const modulos = administrador
+    ? [
+        {
+          titulo: "Gestión de convocatorias",
+          categoria: "ADMINISTRACIÓN",
+          descripcion:
+            "Define beneficios y requisitos, prepara borradores y controla la publicación y el cierre de convocatorias.",
+          ruta: "/admin/convocatorias",
+          accion: "GESTIONAR CONVOCATORIAS",
+        },
+        {
+          titulo: "Panel de evaluador",
+          categoria: "COMITÉS Y EVALUACIONES",
+          descripcion:
+            "Consulta los expedientes asignados a los comités a los que perteneces.",
+          ruta: "/admin/panel-evaluador",
+          accion: "ABRIR BANDEJA",
+        },
+        {
+          titulo: "Reportes y estadísticas",
+          categoria: "ANÁLISIS Y CONTROL",
+          descripcion:
+            "Visualiza indicadores institucionales, becas otorgadas y estadísticas del proceso.",
+          ruta: "/admin/reportes",
+          accion: "VER REPORTES",
+        },
+      ]
+    : [
+        {
+          titulo: "Convocatorias",
+          categoria: "EXPLORACIÓN ACADÉMICA",
+          descripcion:
+            "Consulta las oportunidades de beca publicadas, sus fechas, requisitos y condiciones.",
+          ruta: "/convocatorias",
+          accion: "EXPLORAR CONVOCATORIAS",
+        },
+        {
+          titulo: "Mis solicitudes",
+          categoria: "GESTIÓN DE PROCESOS",
+          descripcion:
+            "Consulta tus solicitudes registradas y revisa el estado actual de cada proceso de beca.",
+          ruta: "/mis-solicitudes",
+          accion: "VER MIS SOLICITUDES",
+        },
+      ];
 
   const manejarCerrarSesion = () => {
     if (transicionActiva) {
@@ -179,8 +169,8 @@ function Dashboard() {
 
             <p className="dashboard-description">
               {administrador
-                ? "Administra las convocatorias y revisa las oportunidades publicadas desde un mismo panel."
-                : "Consulta oportunidades de beca y accede a los servicios disponibles desde tu panel académico."}
+                ? "Administra convocatorias, evalúa expedientes y consulta reportes institucionales desde un mismo panel."
+                : "Consulta oportunidades de beca y da seguimiento a tus solicitudes desde tu panel académico."}
             </p>
           </div>
 
@@ -234,16 +224,11 @@ function Dashboard() {
           aria-label="Módulos del sistema"
         >
           {modulos.map((modulo, indice) => {
-            const disponible = Boolean(modulo.ruta);
 
             return (
               <article
                 key={modulo.titulo}
-                className={`dashboard-module ${
-                  disponible
-                    ? "dashboard-module-active"
-                    : "dashboard-module-disabled"
-                }`}
+                className="dashboard-module dashboard-module-active"
               >
                 <div className="dashboard-module-top">
                   <span className="dashboard-module-code">
@@ -251,35 +236,19 @@ function Dashboard() {
                   </span>
 
                   <span className="dashboard-module-status">
-                    {disponible && (
-                      <i aria-hidden="true" />
-                    )}
-
-                    {disponible
-                      ? "DISPONIBLE"
-                      : "EN DESARROLLO"}
+                    <i aria-hidden="true" />
+                    DISPONIBLE
                   </span>
                 </div>
 
-                {disponible ? (
-                  <div
-                    className="dashboard-module-symbol"
-                    aria-hidden="true"
-                  >
-                    <div>
-                      <span />
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="dashboard-module-placeholder"
-                    aria-hidden="true"
-                  >
-                    <span />
-                    <span />
+                <div
+                  className="dashboard-module-symbol"
+                  aria-hidden="true"
+                >
+                  <div>
                     <span />
                   </div>
-                )}
+                </div>
 
                 <div className="dashboard-module-copy">
                   <small>
@@ -295,22 +264,16 @@ function Dashboard() {
                   </p>
                 </div>
 
-                {disponible ? (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      abrirModulo(modulo.ruta)
-                    }
-                    disabled={transicionActiva}
-                  >
-                    {modulo.accion}
-                    <span aria-hidden="true">→</span>
-                  </button>
-                ) : (
-                  <div className="dashboard-module-soon">
-                    PRÓXIMAMENTE
-                  </div>
-                )}
+                <button
+                  type="button"
+                  onClick={() =>
+                    abrirModulo(modulo.ruta)
+                  }
+                  disabled={transicionActiva}
+                >
+                  {modulo.accion}
+                  <span aria-hidden="true">→</span>
+                </button>
               </article>
             );
           })}
