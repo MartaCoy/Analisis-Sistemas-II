@@ -1,6 +1,7 @@
 import { obtenerToken } from "./authService.js";
+import { apiUrl } from "../config/api.js";
 
-const API_URL = "/api/solicitudes";
+const API_URL = apiUrl("/api/solicitudes");
 const TIEMPO_LIMITE_MS = 15_000;
 
 function crearError(mensaje, status = 0) {
