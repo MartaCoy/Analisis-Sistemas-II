@@ -1,6 +1,7 @@
 import { obtenerToken } from "./authService.js";
+import { apiUrl } from "../config/api.js";
 
-const API_URL = "/api/convocatorias";
+const API_URL = apiUrl("/api/convocatorias");
 const TIEMPO_LIMITE_MS = 15_000;
 
 // Conservamos el estado HTTP para que la pantalla pueda manejar cada caso.

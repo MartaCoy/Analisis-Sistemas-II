@@ -1,10 +1,11 @@
 import { obtenerToken } from "./authService.js";
+import { apiUrl } from "../config/api.js";
 import {
   cuerpoConvocatoria,
   validarFormulario,
 } from "../utils/convocatoriaAdminUtils.js";
 
-const API_URL = "/api/convocatorias";
+const API_URL = apiUrl("/api/convocatorias");
 const TIEMPO_LIMITE_MS = 15_000;
 
 function errorAPI(mensaje, status = 0, resultadoIncierto = false) {

@@ -1,7 +1,11 @@
 import { obtenerToken } from "./authService.js";
+import { apiUrl } from "../config/api.js";
 
 const API_URL = String(
-  import.meta.env.VITE_REPORTES_API_URL || ""
+  import.meta.env.VITE_REPORTES_API_URL ||
+  (import.meta.env.VITE_API_BASE_URL
+    ? apiUrl("/api/reportes/becas")
+    : "")
 ).trim();
 
 export const DEMO_REPORTES_HABILITADA =

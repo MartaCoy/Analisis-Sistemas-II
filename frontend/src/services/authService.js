@@ -1,4 +1,6 @@
-const API_URL = "/api/auth";
+import { apiUrl } from "../config/api.js";
+
+const API_URL = apiUrl("/api/auth");
 const SESSION_KEY = "becas_session";
 
 async function procesarRespuesta(respuesta) {
