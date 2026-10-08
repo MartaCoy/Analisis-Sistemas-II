@@ -83,16 +83,7 @@ public class SolicitudService {
 
         solicitud.setEstado(nuevoEstado);
         Solicitud guardada = solicitudRepository.save(solicitud);
-
-        com.becas.backend.model.HistorialEstadoSolicitud historial =
-                new com.becas.backend.model.HistorialEstadoSolicitud();
-
-        historial.setSolicitudId(guardada.getId());
-        historial.setEstadoAnterior(estadoAnterior);
-        historial.setEstadoNuevo(nuevoEstado);
-        historial.setFechaCambio(java.time.LocalDateTime.now());
-
-        historialRepository.save(historial);
+        solicitudRepository.flush();
 
         return guardada;
     }
