@@ -58,7 +58,7 @@ class DocumentoServiceTest {
 
     private static final Long SOLICITUD_ID = 1L;
     private static final Long ESTUDIANTE_ID = 10L;
-    private static final long CINCO_MB = 5L * 1024 * 1024;
+    private static final long QUINIENTOS_MB = 500L * 1024 * 1024;
     private static final String RUTA_GUARDADA = "uploads/solicitud_1/uuid_constancia.pdf";
 
     private Solicitud solicitud;
@@ -157,11 +157,11 @@ class DocumentoServiceTest {
         }
 
         @Test
-        @DisplayName("Un archivo de exactamente 5MB se acepta (el limite no es excluyente)")
+        @DisplayName("Un archivo de exactamente 500MB se acepta (el limite no es excluyente)")
         void aceptaArchivoEnElLimiteExacto() {
             MultipartFile enElLimite = mock(MultipartFile.class);
             when(enElLimite.isEmpty()).thenReturn(false);
-            when(enElLimite.getSize()).thenReturn(CINCO_MB);
+            when(enElLimite.getSize()).thenReturn(QUINIENTOS_MB);
             when(enElLimite.getOriginalFilename()).thenReturn("constancia.pdf");
 
             when(solicitudRepository.findById(SOLICITUD_ID)).thenReturn(Optional.of(solicitud));
@@ -183,18 +183,18 @@ class DocumentoServiceTest {
     class TamanoExcedido {
 
         @Test
-        @DisplayName("Rechaza un archivo que supera los 5MB por un solo byte")
+        @DisplayName("Rechaza un archivo que supera los 500MB por un solo byte")
         void rechazaArchivoDemasiadoGrande() {
             MultipartFile pesado = mock(MultipartFile.class);
             when(pesado.isEmpty()).thenReturn(false);
-            when(pesado.getSize()).thenReturn(CINCO_MB + 1);
+            when(pesado.getSize()).thenReturn(QUINIENTOS_MB + 1);
 
             when(solicitudRepository.findById(SOLICITUD_ID)).thenReturn(Optional.of(solicitud));
 
             assertThatThrownBy(() -> documentoService.subirDocumento(
                     SOLICITUD_ID, pesado, "CONSTANCIA_ESTUDIOS", ESTUDIANTE_ID))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("5MB");
+                    .hasMessageContaining("500MB");
         }
 
         @Test
@@ -202,7 +202,7 @@ class DocumentoServiceTest {
         void archivoExcedidoNoSePersiste() {
             MultipartFile pesado = mock(MultipartFile.class);
             when(pesado.isEmpty()).thenReturn(false);
-            when(pesado.getSize()).thenReturn(20L * 1024 * 1024);
+            when(pesado.getSize()).thenReturn(QUINIENTOS_MB + 1);
 
             when(solicitudRepository.findById(SOLICITUD_ID)).thenReturn(Optional.of(solicitud));
 
