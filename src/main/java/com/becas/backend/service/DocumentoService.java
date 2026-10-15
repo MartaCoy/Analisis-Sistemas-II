@@ -14,7 +14,7 @@ import java.util.Set;
 @Service
 public class DocumentoService {
 
-    private static final long TAMANO_MAXIMO_BYTES = 5 * 1024 * 1024;
+    private static final long TAMANO_MAXIMO_BYTES = 500L * 1024 * 1024;
     private static final Set<String> EXTENSIONES_PERMITIDAS = Set.of("pdf", "jpg", "jpeg", "png");
 
     @Autowired
@@ -34,7 +34,7 @@ public class DocumentoService {
             throw new IllegalArgumentException("El archivo está vacío.");
         }
         if (archivo.getSize() > TAMANO_MAXIMO_BYTES) {
-            throw new IllegalArgumentException("El archivo supera el tamaño máximo permitido (5MB).");
+            throw new IllegalArgumentException("El archivo supera el tamaño máximo permitido (500MB).");
         }
         String nombreOriginal = archivo.getOriginalFilename();
         String extension = nombreOriginal != null && nombreOriginal.contains(".")
