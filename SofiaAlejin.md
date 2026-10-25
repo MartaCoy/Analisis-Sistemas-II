@@ -1,5 +1,3 @@
-# Sofia Alejin
+## Práctica Git
 
-## Análisis de Sistemas II
-
-Este es mi archivo de práctica para Git y GitHub.
+Archivo actualizado desde mi nueva computadora.
