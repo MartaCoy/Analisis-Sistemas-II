@@ -10,6 +10,9 @@ public class EstadoEnEvaluacion implements EstadoSolicitud {
     public String aprobar() { return "APROBADA"; }
 
     @Override
+    public String solicitarSegundaAprobacion() { return "PENDIENTE_SEGUNDA_APROBACION"; }
+
+    @Override
     public String rechazar() { return "RECHAZADA"; }
 
     @Override

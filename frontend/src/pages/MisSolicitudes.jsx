@@ -104,7 +104,7 @@ function MisSolicitudes() {
 
     const evaluacion = solicitudes.filter(
       (solicitud) =>
-        solicitud.estado === "EN_EVALUACION"
+        ["EN_EVALUACION", "PENDIENTE_SEGUNDA_APROBACION"].includes(solicitud.estado)
     ).length;
 
     const resueltas = solicitudes.filter(

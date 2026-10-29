@@ -6,6 +6,7 @@ public class EstadoSolicitudFactory {
         return switch (estado) {
             case "RECIBIDA" -> new EstadoRecibida();
             case "EN_EVALUACION" -> new EstadoEnEvaluacion();
+            case "PENDIENTE_SEGUNDA_APROBACION" -> new EstadoPendienteSegundaAprobacion();
             case "APROBADA" -> new EstadoAprobada();
             case "RECHAZADA" -> new EstadoRechazada();
             default -> throw new IllegalArgumentException("Estado desconocido: " + estado);

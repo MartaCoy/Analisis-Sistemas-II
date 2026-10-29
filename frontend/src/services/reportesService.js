@@ -1,3 +1,4 @@
+import { mensajeHttp } from "../utils/mensajesUsuario.js";
 import { obtenerToken } from "./authService.js";
 import { apiUrl } from "../config/api.js";
 
@@ -149,7 +150,7 @@ export async function obtenerReporteBecas({
 
   if (!respuesta.ok) {
     throw crearError(
-      `No se pudo generar el reporte (HTTP ${respuesta.status}).`,
+      mensajeHttp(respuesta.status, "general", "ADMINISTRADOR"),
       "HTTP"
     );
   }

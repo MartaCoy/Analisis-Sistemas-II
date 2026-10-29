@@ -53,6 +53,9 @@ class DocumentoServiceTest {
     @Mock
     private SolicitudRepository solicitudRepository;
 
+    @Mock
+    private RegistroSolicitudService registros;
+
     @InjectMocks
     private DocumentoService documentoService;
 

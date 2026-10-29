@@ -166,8 +166,8 @@ function DetalleSolicitud() {
                 </h1>
 
                 <span>
-                  Consulta los datos, documentos y movimientos
-                  registrados durante tu proceso de beca.
+                  Consulta los datos, documentos y movimientos registrados durante tu proceso de beca.
+                  Los avisos de cambios de estado están disponibles en Mis notificaciones.
                 </span>
               </div>
 
@@ -184,6 +184,12 @@ function DetalleSolicitud() {
                 </strong>
               </article>
 
+              <article>
+                <small>MONTO SOLICITADO</small>
+                <strong>{solicitud.montoSolicitado == null
+                  ? "Pendiente de verificación"
+                  : Number(solicitud.montoSolicitado).toLocaleString("es-GT", { minimumFractionDigits: 2 })}</strong>
+              </article>
               <article>
                 <small>ESTADO ACTUAL</small>
                 <strong>

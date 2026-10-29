@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,12 +60,14 @@ class ConvocatoriaServiceTest {
         request.setTipoBeca("ACADEMICA");
         request.setRequisitos("Promedio minimo de 85 puntos");
         request.setBeneficio("Cobertura del 100% de la colegiatura");
+        request.setMontoBeca(new BigDecimal("10000.00"));
         request.setFechaApertura(APERTURA);
         request.setFechaCierre(CIERRE);
 
         convocatoriaGuardada = new Convocatoria();
         convocatoriaGuardada.setId(1L);
         convocatoriaGuardada.setNombre("Beca de Excelencia Academica 2026");
+        convocatoriaGuardada.setMontoBeca(new BigDecimal("10000.00"));
         convocatoriaGuardada.setTipoBeca("ACADEMICA");
         convocatoriaGuardada.setRequisitos("Promedio minimo de 85 puntos");
         convocatoriaGuardada.setBeneficio("Cobertura del 100% de la colegiatura");
@@ -77,6 +80,7 @@ class ConvocatoriaServiceTest {
         c.setId(id);
         c.setNombre(nombre);
         c.setTipoBeca("ACADEMICA");
+        c.setMontoBeca(new BigDecimal("10000.00"));
         c.setEstado(estado);
         return c;
     }

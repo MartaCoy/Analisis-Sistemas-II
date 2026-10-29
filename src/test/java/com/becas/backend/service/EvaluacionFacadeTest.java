@@ -45,6 +45,7 @@ class EvaluacionFacadeTest {
     @Mock private ComiteMiembroRepository comiteMiembroRepository;
     @Mock private EstudianteRepository estudianteRepository;
     @Mock private ApplicationEventPublisher eventPublisher;
+    @Mock private RegistroSolicitudService registros;
 
     private EvaluacionFacade facade;
     private Solicitud solicitud;
@@ -52,7 +53,7 @@ class EvaluacionFacadeTest {
     @BeforeEach
     void setUp() {
         facade = new EvaluacionFacade(solicitudService, convocatoriaService, evaluacionRepository,
-                comiteMiembroRepository, estudianteRepository, eventPublisher,
+                comiteMiembroRepository, estudianteRepository, eventPublisher, registros,
                 List.of(new CriterioAcademico(), new CriterioDeportivo(), new CriterioSocioeconomico()));
 
         solicitud = new Solicitud();

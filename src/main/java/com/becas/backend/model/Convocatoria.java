@@ -2,6 +2,7 @@ package com.becas.backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "convocatorias")
@@ -23,6 +24,9 @@ public class Convocatoria {
     @Column(length = 500)
     private String beneficio;
 
+    @Column(name = "monto_beca", precision = 14, scale = 2)
+    private BigDecimal montoBeca;
+
     private LocalDate fechaApertura;
     private LocalDate fechaCierre;
 
@@ -40,6 +44,8 @@ public class Convocatoria {
     public void setTipoBeca(String tipoBeca) { this.tipoBeca = tipoBeca; }
     public String getRequisitos() { return requisitos; }
     public void setRequisitos(String requisitos) { this.requisitos = requisitos; }
+    public BigDecimal getMontoBeca() { return montoBeca; }
+    public void setMontoBeca(BigDecimal montoBeca) { this.montoBeca = montoBeca; }
     public String getBeneficio() { return beneficio; }
     public void setBeneficio(String beneficio) { this.beneficio = beneficio; }
     public LocalDate getFechaApertura() { return fechaApertura; }

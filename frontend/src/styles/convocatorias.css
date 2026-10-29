@@ -1095,3 +1095,11 @@
     width: 100%;
   }
 }
+/* Acceso directo y monto: el estudiante no necesita escribir rutas manualmente. */
+.conv-monto{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:center;margin:18px 0;color:#d4eeee}
+.conv-monto small{color:#92b8bb;font-size:.7rem;letter-spacing:.1em}.conv-monto strong{color:#e7bd70;font-size:1.05rem}
+.conv-card .conv-solicitar-directo{width:100%;min-height:44px;margin:8px 0 14px;padding:12px;border:1px solid #53dccc;background:#174640;color:#c3fff8;cursor:pointer;font-weight:700;letter-spacing:.08em}
+.conv-card .conv-solicitar-directo:disabled{opacity:.55;cursor:not-allowed}.conv-card .conv-solicitar-directo:focus-visible{outline:2px solid #edc775;outline-offset:3px}
+.conv-modal{max-height:calc(100dvh - 60px);overscroll-behavior:contain;scrollbar-gutter:stable}
+.conv-modal-footer{gap:15px;flex-wrap:wrap}
+@media(max-width:520px){.conv-modal{max-height:calc(100dvh - 24px)}}

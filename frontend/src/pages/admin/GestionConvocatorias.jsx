@@ -85,6 +85,12 @@ const CAMPOS = [
     type: "date",
   },
   {
+    name: "montoBeca",
+    label: "Monto de la beca (valor monetario)",
+    type: "number",
+    placeholder: "Ej. 12500.00",
+  },
+  {
     name: "beneficio",
     label: "Beneficio de la beca",
     control: "textarea",
@@ -209,6 +215,8 @@ function CampoFormulario({
         <input
           {...props}
           type={campo.type || "text"}
+          min={campo.type === "number" ? "0.01" : undefined}
+          step={campo.type === "number" ? "0.01" : undefined}
           maxLength={max}
           placeholder={campo.placeholder}
         />
@@ -593,7 +601,8 @@ function ModalConvocatoria({
             <form onSubmit={enviar} noValidate>
               <p className="ga-help">
                 Nombre y tipo son obligatorios. El beneficio describe
-                el apoyo ofrecido; no tiene que ser un monto o porcentaje.
+                el apoyo ofrecido. El monto monetario se registra por separado
+                y será obligatorio para publicar y aprobar solicitudes.
                 {modo === "crear"
                   ? " Se guardará como borrador: publicar es una acción independiente."
                   : " Guardar conserva el estado de publicación."}

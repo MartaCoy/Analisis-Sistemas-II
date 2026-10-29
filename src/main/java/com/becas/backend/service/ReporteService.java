@@ -53,6 +53,7 @@ public class ReporteService {
         long aprobadas = contarEstado(solicitudes, "APROBADA");
         long rechazadas = contarEstado(solicitudes, "RECHAZADA");
         long enEvaluacion = contarEstado(solicitudes, "EN_EVALUACION");
+        long pendienteSegunda = contarEstado(solicitudes, "PENDIENTE_SEGUNDA_APROBACION");
         long recibidas = contarEstado(solicitudes, "RECIBIDA");
 
         ReporteBecasResponse.Resumen resumen =
@@ -68,6 +69,7 @@ public class ReporteService {
                 new ReporteBecasResponse.EstadoCantidad("Aprobadas", aprobadas),
                 new ReporteBecasResponse.EstadoCantidad("Rechazadas", rechazadas),
                 new ReporteBecasResponse.EstadoCantidad("En evaluación", enEvaluacion),
+                new ReporteBecasResponse.EstadoCantidad("Pendiente de segunda aprobación", pendienteSegunda),
                 new ReporteBecasResponse.EstadoCantidad("Recibidas", recibidas)
         );
 

@@ -1,4 +1,5 @@
-import { obtenerToken } from "./authService.js";
+import { obtenerToken, obtenerSesion } from "./authService.js";
+import { esMensajeNegocio, mensajeHttp } from "../utils/mensajesUsuario.js";
 import { apiUrl } from "../config/api.js";
 
 const API_URL = apiUrl("/api/solicitudes");
@@ -126,9 +127,9 @@ async function solicitar(
       };
 
       throw crearError(
-        mensajeServidor ||
-          mensajes[respuesta.status] ||
-          `No se pudo completar la operación (HTTP ${respuesta.status}).`,
+        (respuesta.status === 400 && esMensajeNegocio(mensajeServidor) ? mensajeServidor : null) ||
+          (respuesta.status === 403 ? mensajeHttp(403, "solicitudes", obtenerSesion()?.rol) : mensajes[respuesta.status]) ||
+          mensajeHttp(respuesta.status),
         respuesta.status
       );
     }
@@ -153,7 +154,7 @@ async function solicitar(
 
     if (error instanceof TypeError) {
       throw crearError(
-        "No fue posible conectar con el servidor. Verifica que el backend esté activo."
+        "No pudimos conectar con el servicio. Revisa tu conexión e intenta nuevamente."
       );
     }
 
@@ -358,4 +359,44 @@ export async function obtenerHistorialSolicitud(
   }
 
   return datos;
+}
+
+// Requisitos octubre 2026: consulta administrativa y segunda aprobación.
+export async function listarPendientesSegundaAprobacion({ signal } = {}) {
+  const datos = await solicitar("/pendientes-segunda", { signal });
+  if (!Array.isArray(datos)) throw crearError("Listado de autorizaciones inválido.");
+  return datos;
+}
+
+export async function obtenerAprobacionesSolicitud(solicitudId, { signal } = {}) {
+  const id = validarId(solicitudId, "solicitud");
+  const datos = await solicitar(`/${id}/aprobaciones`, { signal });
+  if (!Array.isArray(datos)) throw crearError("Registro de aprobaciones inválido.");
+  return datos;
+}
+
+export async function obtenerAuditoriaSolicitud(solicitudId, { signal } = {}) {
+  const id = validarId(solicitudId, "solicitud");
+  const datos = await solicitar(`/${id}/auditoria`, { signal });
+  if (!Array.isArray(datos)) throw crearError("Registro de auditoría inválido.");
+  return datos;
+}
+
+export async function resolverSegundaAprobacionSolicitud(
+  solicitudId, { aprobada, observacion = "" }
+) {
+  const id = validarId(solicitudId, "solicitud");
+  if (typeof aprobada !== "boolean") throw crearError("Decisión inválida.", 400);
+  if (observacion.length > 500) throw crearError("Observación demasiado larga.", 400);
+  return solicitar(`/${id}/segunda-aprobacion`, {
+    method: "POST", body: { aprobada, observacion },
+  });
+}
+
+export async function actualizarMontoSolicitud(solicitudId, monto) {
+  const id = validarId(solicitudId, "solicitud");
+  if (!Number.isFinite(Number(monto)) || Number(monto) <= 0) {
+    throw crearError("Indica un monto positivo.", 400);
+  }
+  return solicitar(`/${id}/monto`, { method: "PUT", body: { monto: Number(monto) } });
 }
