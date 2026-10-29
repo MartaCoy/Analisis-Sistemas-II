@@ -1,3 +1,4 @@
+import { mensajeHttp, esMensajeNegocio } from "../utils/mensajesUsuario.js";
 import { obtenerToken } from "./authService.js";
 import { apiUrl } from "../config/api.js";
 
@@ -138,13 +139,13 @@ async function solicitarEvaluaciones(id, { body, signal } = {}) {
 
       let mensaje =
         mensajes[respuesta.status] ||
-        `No se completó la operación (HTTP ${respuesta.status}).`;
+        mensajeHttp(respuesta.status, "general", "ADMINISTRADOR");
 
       // El controlador devuelve sus errores de negocio como texto.
       if (
         respuesta.status === 400 &&
         tipo.includes("text/plain") &&
-        texto.trim()
+        esMensajeNegocio(texto.trim())
       ) {
         mensaje = texto.trim().slice(0, 500);
       }
@@ -159,7 +160,7 @@ async function solicitarEvaluaciones(id, { body, signal } = {}) {
 
     if (!tipo.includes("json")) {
       throw crearError(
-        "El servidor no devolvió JSON válido.",
+        "No pudimos leer la respuesta del servicio. Actualiza la pantalla.",
         0,
         escritura
       );

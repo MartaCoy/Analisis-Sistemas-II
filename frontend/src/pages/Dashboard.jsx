@@ -55,6 +55,13 @@ function Dashboard() {
           accion: "ABRIR BANDEJA",
         },
         {
+          titulo: "Segundas aprobaciones",
+          categoria: "CONTROL DE AUTORIZACIONES",
+          descripcion: "Revisa las becas de monto alto y registra la segunda decisión con trazabilidad.",
+          ruta: "/admin/segundas-aprobaciones",
+          accion: "REVISAR AUTORIZACIONES",
+        },
+        {
           titulo: "Reportes y estadísticas",
           categoria: "ANÁLISIS Y CONTROL",
           descripcion:
@@ -71,6 +78,13 @@ function Dashboard() {
             "Consulta las oportunidades de beca publicadas, sus fechas, requisitos y condiciones.",
           ruta: "/convocatorias",
           accion: "EXPLORAR CONVOCATORIAS",
+        },
+        {
+          titulo: "Mis notificaciones",
+          categoria: "TRAZABILIDAD",
+          descripcion: "Consulta los avisos generados por cada cambio de estado de tus becas.",
+          ruta: "/notificaciones",
+          accion: "VER NOTIFICACIONES",
         },
         {
           titulo: "Mis solicitudes",

@@ -1,3 +1,4 @@
+import { mensajeHttp } from "../utils/mensajesUsuario.js";
 import { obtenerToken } from "./authService.js";
 import { apiUrl } from "../config/api.js";
 import {
@@ -95,7 +96,7 @@ async function solicitar(ruta = "", { method = "GET", body, signal } = {}) {
 
       throw errorAPI(
         mensajes[respuesta.status] ||
-          `No se pudo completar la operación (HTTP ${respuesta.status}).`,
+          mensajeHttp(respuesta.status, "general", "ADMINISTRADOR"),
         respuesta.status,
         escritura && (respuesta.status >= 500 || respuesta.status === 408)
       );
@@ -108,7 +109,7 @@ async function solicitar(ruta = "", { method = "GET", body, signal } = {}) {
 
     const tipo = respuesta.headers.get("content-type") || "";
     if (!tipo.toLowerCase().includes("json")) {
-      throw errorAPI("El servidor no devolvió JSON válido.", 0, escritura);
+      throw errorAPI("No pudimos leer la respuesta del servicio. Actualiza la pantalla.", 0, escritura);
     }
 
     try {

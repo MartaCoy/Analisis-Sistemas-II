@@ -6,6 +6,7 @@ import { obtenerSesion } from "../services/authService.js";
 import TransitionLink from "../components/TransitionLink.jsx";
 
 import "../styles/convocatorias.css";
+import { mostrarMonto } from "../utils/formatoPresentacion.js";
 
 const TIPOS_BECA = {
   ACADEMICA: { etiqueta: "Académica", codigo: "AC" },
@@ -889,6 +890,14 @@ function Convocatorias() {
                           </div>
                         </div>
 
+                        <div className="conv-monto"><small>MONTO DE LA BECA</small><strong>{mostrarMonto(datos.montoBeca)}</strong></div>
+                        {esEstudiante && (
+                          <button type="button" className="conv-solicitar-directo"
+                            disabled={vigencia.codigo !== "abierta" || !(Number(datos.montoBeca) > 0)}
+                            onClick={() => navigate(`/convocatorias/${datos.id}/solicitar`)}>
+                            {vigencia.codigo !== "abierta" ? "SOLICITUD NO DISPONIBLE" : !(Number(datos.montoBeca) > 0) ? "MONTO POR CONFIRMAR" : "SOLICITAR BECA →"}
+                          </button>
+                        )}
                         <div className="conv-card-footer">
                           <div className="conv-tiempo">
                             {vigencia.cantidad !==
@@ -1027,6 +1036,7 @@ function Convocatorias() {
                 aria-hidden="true"
               />
 
+              <div className="conv-monto"><small>MONTO DE LA BECA</small><strong>{mostrarMonto(seleccionada.montoBeca)}</strong></div>
               {seleccionada.beneficio && (
                 <div className="conv-modal-bloque">
                   <small>
@@ -1156,12 +1166,12 @@ function Convocatorias() {
                       }
                       disabled={
                         vigenciaDetalle.codigo !==
-                        "abierta"
+                        "abierta" || !(Number(seleccionada.montoBeca) > 0)
                       }
                     >
                       {vigenciaDetalle.codigo ===
                       "abierta"
-                        ? "SOLICITAR BECA →"
+                        ? (Number(seleccionada.montoBeca) > 0 ? "SOLICITAR BECA →" : "MONTO POR CONFIRMAR")
                         : vigenciaDetalle.codigo ===
                             "proxima"
                           ? "PRÓXIMAMENTE"

@@ -25,6 +25,7 @@ import {
 } from "../services/authService.js";
 
 import "../styles/solicitud-beca.css";
+import { mostrarMonto } from "../utils/formatoPresentacion.js";
 
 const DIA_MS = 24 * 60 * 60 * 1000;
 
@@ -182,6 +183,7 @@ function SolicitudBeca() {
   const sesion = obtenerSesion();
 
   const archivoRef = useRef(null);
+  const creacionEnCurso = useRef(false);
 
   const [estadoCarga, setEstadoCarga] =
     useState("cargando");
@@ -350,6 +352,7 @@ function SolicitudBeca() {
   const manejarCrearSolicitud =
     async () => {
       if (
+        creacionEnCurso.current ||
         creando ||
         solicitud
       ) {
@@ -364,6 +367,7 @@ function SolicitudBeca() {
         return;
       }
 
+      creacionEnCurso.current = true;
       setCreando(true);
       setErrorAccion("");
       setMensaje("");
@@ -389,6 +393,7 @@ function SolicitudBeca() {
             "No fue posible crear la solicitud."
         );
       } finally {
+        creacionEnCurso.current = false;
         setCreando(false);
       }
     };
@@ -655,6 +660,7 @@ function SolicitudBeca() {
             </h2>
 
             <div className="solb-separador" />
+            <div className="solb-bloque"><small>MONTO DE LA BECA</small><p>{mostrarMonto(solicitud?.montoSolicitado ?? convocatoria.montoBeca)}</p></div>
 
             <div className="solb-bloque">
               <small>

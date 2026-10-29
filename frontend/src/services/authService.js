@@ -1,117 +1,60 @@
 import { apiUrl } from "../config/api.js";
+import { errorUsuario, mensajeHttp } from "../utils/mensajesUsuario.js";
 
 const API_URL = apiUrl("/api/auth");
 const SESSION_KEY = "becas_session";
+const CAMPOS = new Set(["nombreCompleto", "correo", "password", "carnet", "universidadId"]);
 
-async function procesarRespuesta(respuesta) {
-  const contentType =
-    respuesta.headers.get("content-type");
-
-  let data;
-
-  if (
-    contentType &&
-    contentType.includes("application/json")
-  ) {
-    data = await respuesta.json();
-  } else {
-    data = await respuesta.text();
-  }
-
-  if (!respuesta.ok) {
-    const mensaje =
-      typeof data === "string"
-        ? data
-        : data?.message ||
-          "Ocurrió un error al procesar la solicitud.";
-
-    throw new Error(mensaje);
-  }
-
-  return data;
-}
-
-export async function registrarEstudiante(datos) {
+async function autenticar(operacion, body) {
+  const controller = new AbortController();
+  let agotado = false;
+  const timer = setTimeout(() => { agotado = true; controller.abort(); }, 15000);
   try {
-    const respuesta = await fetch(
-      `${API_URL}/registro`,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-
-        body: JSON.stringify({
-          nombreCompleto:
-            datos.nombreCompleto.trim(),
-
-          carnet:
-            datos.carnet.trim(),
-
-          correo:
-            datos.correo.trim().toLowerCase(),
-
-          password:
-            datos.password,
-
-          universidadId:
-            Number(datos.universidadId),
-        }),
+    const respuesta = await fetch(`${API_URL}/${operacion}`, {
+      method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(body), signal: controller.signal, cache: "no-store",
+    });
+    // Algunos controladores devuelven texto incluso con un Content-Type JSON.
+    const texto = await respuesta.text();
+    let datos = null;
+    try { datos = texto ? JSON.parse(texto) : null; } catch { /* el status decide el mensaje */ }
+    if (!respuesta.ok) {
+      const campos = {};
+      if (operacion === "registro" && datos?.code === "VALIDACION_FALLIDA" && datos?.errors) {
+        for (const [campo, mensaje] of Object.entries(datos.errors)) {
+          if (CAMPOS.has(campo) && typeof mensaje === "string" && mensaje.length <= 200) campos[campo] = mensaje;
+        }
       }
-    );
-
-    return await procesarRespuesta(respuesta);
-  } catch (error) {
-    if (error instanceof TypeError) {
-      throw new Error(
-        "No fue posible conectar con el servidor. Verifica que el backend esté activo."
-      );
+      throw errorUsuario(Object.values(campos)[0] || mensajeHttp(respuesta.status, operacion), respuesta.status, campos);
     }
-
+    if (!datos || typeof datos.token !== "string" || !datos.token.trim() || typeof datos.rol !== "string") {
+      throw errorUsuario("No recibimos una confirmación válida. Intenta iniciar sesión nuevamente.");
+    }
+    return datos;
+  } catch (error) {
+    if (agotado) throw errorUsuario(operacion === "registro"
+      ? "No recibimos confirmación a tiempo. Comprueba si puedes iniciar sesión antes de repetir el registro."
+      : "El servicio tardó demasiado en responder. Intenta nuevamente.");
+    if (error instanceof TypeError) throw errorUsuario("No pudimos conectar con el servicio. Revisa tu conexión e intenta nuevamente.");
     throw error;
-  }
+  } finally { clearTimeout(timer); }
 }
 
-export async function iniciarSesion(datos) {
-  try {
-    const respuesta = await fetch(
-      `${API_URL}/login`,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-
-        body: JSON.stringify({
-          correo:
-            datos.correo.trim().toLowerCase(),
-
-          password:
-            datos.password,
-        }),
-      }
-    );
-
-    return await procesarRespuesta(respuesta);
-  } catch (error) {
-    if (error instanceof TypeError) {
-      throw new Error(
-        "No fue posible conectar con el servidor. Verifica que el backend esté activo."
-      );
-    }
-
-    throw error;
-  }
+export function registrarEstudiante(datos) {
+  return autenticar("registro", {
+    nombreCompleto: datos.nombreCompleto.trim(), carnet: datos.carnet.trim(),
+    correo: datos.correo.trim().toLowerCase(), password: datos.password,
+    universidadId: Number(datos.universidadId),
+  });
 }
-
+export function iniciarSesion(datos) {
+  return autenticar("login", { correo: datos.correo.trim().toLowerCase(), password: datos.password });
+}
 export function guardarSesion(datos) {
+
   if (!datos?.token) {
     throw new Error(
-      "El servidor no devolvió un token de sesión."
+      "No pudimos confirmar tu sesión. Intenta iniciar sesión nuevamente."
     );
   }
 

@@ -269,3 +269,12 @@
     flex-direction: column;
   }
 }
+
+.ee-pendiente_segunda_aprobacion { color: #e6bd72; border-color: #9a783b; }
+
+/* VISOR_DOCUMENTOS_PROTEGIDOS_V1 */
+.ee-file-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.ee-file-btn { border:1px solid #315863; border-radius:7px; background:#12333d;
+  color:#e6f3f4; padding:7px 12px; font-size:12px; font-weight:600; cursor:pointer; }
+.ee-file-btn:hover { background:#20515b; }
+.ee-file-btn:focus-visible { outline:2px solid #64c5d1; outline-offset:2px; }

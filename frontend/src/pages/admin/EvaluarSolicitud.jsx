@@ -1,3 +1,4 @@
+import { abrirDocumentoProtegido } from "../../services/documentoArchivoService.js";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -5,6 +6,8 @@ import {
   obtenerSolicitud,
   listarDocumentos,
   obtenerHistorialSolicitud,
+  actualizarMontoSolicitud,
+  obtenerAuditoriaSolicitud,
 } from "../../services/solicitudService.js";
 
 import {
@@ -28,6 +31,7 @@ const ESTADOS = {
   EN_EVALUACION: "En evaluación",
   APROBADA: "Aprobada",
   RECHAZADA: "Rechazada",
+  PENDIENTE_SEGUNDA_APROBACION: "Pendiente de segunda aprobación",
 };
 
 function formatearEstado(estado) {
@@ -66,6 +70,8 @@ function EvaluarSolicitud() {
   const [observaciones, setObservaciones] = useState("");
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState(null);
+  const [montoEdicion, setMontoEdicion] = useState("");
+  const [guardandoMonto, setGuardandoMonto] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -79,6 +85,7 @@ function EvaluarSolicitud() {
           documentos,
           evaluaciones,
           historial,
+          auditoria,
         ] = await Promise.all([
           obtenerBandejaEvaluador({
             signal: controller.signal,
@@ -95,6 +102,7 @@ function EvaluarSolicitud() {
           obtenerHistorialSolicitud(id, {
             signal: controller.signal,
           }),
+          obtenerAuditoriaSolicitud(id, { signal: controller.signal }),
         ]);
 
         if (!activo || controller.signal.aborted) {
@@ -124,6 +132,7 @@ function EvaluarSolicitud() {
             documentos,
             evaluaciones,
             historial,
+            auditoria,
           },
           error: null,
         });
@@ -158,6 +167,27 @@ function EvaluarSolicitud() {
       String(evaluacion.evaluadorId) ===
       String(datos.evaluadorId)
   );
+
+  const puedeEditarMonto =
+    consulta.estado === "listo" &&
+    ["RECIBIDA", "EN_EVALUACION"].includes(solicitud?.estado);
+
+  async function guardarMonto(event) {
+    event.preventDefault();
+    if (!puedeEditarMonto || guardandoMonto) return;
+    setGuardandoMonto(true); setMensaje(null);
+    try {
+      const actualizada = await actualizarMontoSolicitud(id, montoEdicion);
+      const auditoria = await obtenerAuditoriaSolicitud(id);
+      setConsulta((anterior) => ({ ...anterior, datos: {
+        ...anterior.datos, solicitud: actualizada, auditoria,
+      }}));
+      setMontoEdicion("");
+      setMensaje({ tipo: "exito", texto: "Monto registrado y auditado correctamente." });
+    } catch (error) {
+      setMensaje({ tipo: "error", texto: error.message || "No fue posible guardar el monto." });
+    } finally { setGuardandoMonto(false); }
+  }
 
   const puedeEvaluar =
     consulta.estado === "listo" &&
@@ -207,10 +237,12 @@ function EvaluarSolicitud() {
         solicitudActualizada,
         evaluacionesActualizadas,
         historialActualizado,
+        auditoriaActualizada,
       ] = await Promise.all([
         obtenerSolicitud(id),
         listarEvaluacionesSolicitud(id),
         obtenerHistorialSolicitud(id),
+        obtenerAuditoriaSolicitud(id),
       ]);
 
       setConsulta((actual) => ({
@@ -220,6 +252,7 @@ function EvaluarSolicitud() {
           solicitud: solicitudActualizada,
           evaluaciones: evaluacionesActualizadas,
           historial: historialActualizado,
+          auditoria: auditoriaActualizada,
         },
       }));
 
@@ -350,6 +383,13 @@ function EvaluarSolicitud() {
               </article>
 
               <article>
+                <small>MONTO DE LA BECA</small>
+                <strong>{solicitud.montoSolicitado == null
+                  ? "Sin monto definido"
+                  : Number(solicitud.montoSolicitado).toLocaleString("es-GT", { minimumFractionDigits: 2 })}</strong>
+              </article>
+
+              <article>
                 <small>FECHA DE SOLICITUD</small>
                 <strong>
                   {formatearFecha(
@@ -358,6 +398,23 @@ function EvaluarSolicitud() {
                 </strong>
               </article>
             </section>
+
+            {puedeEditarMonto && (
+              <section className="ee-panel" style={{ marginBottom: 22 }}>
+                <div className="ee-section-title"><div><small>CONTROL MONETARIO</small><h2>Actualizar monto de la solicitud</h2></div></div>
+                <p>Para expedientes anteriores sin monto verificado, registra aquí el valor oficial antes de autorizar. Se dejará evidencia en auditoría.</p>
+                <form className="ee-form" onSubmit={guardarMonto}>
+                  <label>Monto verificado
+                    <input type="number" min="0.01" step="0.01" required
+                      value={montoEdicion} onChange={(event) => setMontoEdicion(event.target.value)}
+                      placeholder="Ej. 12500.00" />
+                  </label>
+                  <button type="submit" disabled={guardandoMonto || !montoEdicion.trim()}>
+                    {guardandoMonto ? "GUARDANDO..." : "REGISTRAR MONTO"}
+                  </button>
+                </form>
+              </section>
+            )}
 
             <div className="ee-columns">
               <div className="ee-left">
@@ -391,6 +448,16 @@ function EvaluarSolicitud() {
                               <strong>
                                 {documento.nombreArchivo}
                               </strong>
+                                    <div className="ee-file-actions">
+                                      <button type="button" className="ee-file-btn"
+                                        onClick={() => abrirDocumentoProtegido(documento)}>
+                                        Ver PDF / imagen
+                                      </button>
+                                      <button type="button" className="ee-file-btn"
+                                        onClick={() => abrirDocumentoProtegido(documento, true)}>
+                                        Descargar
+                                      </button>
+                                    </div>
                             </div>
 
                             <span>
@@ -500,6 +567,14 @@ function EvaluarSolicitud() {
                         )
                       )}
                     </div>
+                  )}
+                </section>
+                <section className="ee-panel">
+                  <div className="ee-section-title"><div><small>RESPONSABILIDAD</small><h2>Registro de auditoría</h2></div></div>
+                  {datos.auditoria.length === 0 ? <p className="ee-empty">Sin acciones registradas.</p> : (
+                    <div className="ee-list">{datos.auditoria.map((mov) => (
+                      <article key={mov.id}><div><small>{mov.operacion} · {mov.resultado}</small><strong>{mov.actorCorreo}</strong><p>{mov.detalle}</p></div><span>{formatearFecha(mov.fecha)}</span></article>
+                    ))}</div>
                   )}
                 </section>
               </div>

@@ -5,6 +5,7 @@ import com.becas.backend.model.Convocatoria;
 import com.becas.backend.service.ConvocatoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @RestController
@@ -12,6 +13,11 @@ import java.util.List;
 public class ConvocatoriaController {
 
     @Autowired private ConvocatoriaService convocatoriaService;
+
+    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
+    public ResponseEntity<String> errorValidacion(RuntimeException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 
     @GetMapping("/activas")
     public List<Convocatoria> listarActivas() { return convocatoriaService.listarActivas(); }

@@ -17,8 +17,11 @@ import GestionConvocatorias from "./pages/admin/GestionConvocatorias.jsx";
 import PanelEvaluador from "./pages/admin/PanelEvaluador.jsx";
 import EvaluarSolicitud from "./pages/admin/EvaluarSolicitud.jsx";
 import ReportesEstadisticas from "./pages/admin/ReportesEstadisticas.jsx";
+import SegundasAprobaciones from "./pages/admin/SegundasAprobaciones.jsx";
+import Notificaciones from "./pages/Notificaciones.jsx";
 
 import GlyphTrail from "./components/GlyphTrail.jsx";
+import AccesoDenegado from "./pages/AccesoDenegado.jsx";
 
 import {
   TransitionProvider,
@@ -38,6 +41,7 @@ function RutaProtegida({
     return (
       <Navigate
         to="/login"
+        state={{ aviso: "sesion" }}
         replace
       />
     );
@@ -50,24 +54,14 @@ function RutaProtegida({
     soloAdministrador &&
     rol !== "ADMINISTRADOR"
   ) {
-    return (
-      <Navigate
-        to="/dashboard"
-        replace
-      />
-    );
+    return <AccesoDenegado soloAdministrador />;
   }
 
   if (
     soloEstudiante &&
     rol !== "ESTUDIANTE"
   ) {
-    return (
-      <Navigate
-        to="/dashboard"
-        replace
-      />
-    );
+    return <AccesoDenegado soloAdministrador={false} />;
   }
 
   return children;
@@ -156,6 +150,9 @@ function App() {
             </RutaProtegida>
           }
         />
+
+        <Route path="/notificaciones" element={<RutaProtegida soloEstudiante><Notificaciones /></RutaProtegida>} />
+        <Route path="/admin/segundas-aprobaciones" element={<RutaProtegida soloAdministrador><SegundasAprobaciones /></RutaProtegida>} />
 
         <Route
           path="/admin/reportes"

@@ -1,3 +1,4 @@
+import { mensajeHttp } from "../utils/mensajesUsuario.js";
 import { obtenerToken } from "./authService.js";
 import { apiUrl } from "../config/api.js";
 
@@ -84,7 +85,7 @@ export async function obtenerBandejaEvaluador({ signal } = {}) {
 
       throw crearError(
         mensajes[respuesta.status] ||
-          `No se pudo consultar la bandeja (HTTP ${respuesta.status}).`,
+          mensajeHttp(respuesta.status, "general", "ADMINISTRADOR"),
         respuesta.status
       );
     }
@@ -92,7 +93,7 @@ export async function obtenerBandejaEvaluador({ signal } = {}) {
     const tipo = respuesta.headers.get("content-type") || "";
 
     if (!tipo.toLowerCase().includes("json")) {
-      throw crearError("El servidor no devolvió JSON válido.");
+      throw crearError("No pudimos leer la respuesta del servicio. Actualiza la pantalla.");
     }
 
     const texto = await respuesta.text();

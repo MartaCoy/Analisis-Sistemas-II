@@ -1,12 +1,14 @@
 package com.becas.backend.dto;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 public class ConvocatoriaRequest {
     private String nombre;
     private String tipoBeca;
     private String requisitos;
     private String beneficio;
+    private BigDecimal montoBeca;
     private LocalDate fechaApertura;
     private LocalDate fechaCierre;
 
@@ -16,6 +18,8 @@ public class ConvocatoriaRequest {
     public void setTipoBeca(String tipoBeca) { this.tipoBeca = tipoBeca; }
     public String getRequisitos() { return requisitos; }
     public void setRequisitos(String requisitos) { this.requisitos = requisitos; }
+    public BigDecimal getMontoBeca() { return montoBeca; }
+    public void setMontoBeca(BigDecimal montoBeca) { this.montoBeca = montoBeca; }
     public String getBeneficio() { return beneficio; }
     public void setBeneficio(String beneficio) { this.beneficio = beneficio; }
     public LocalDate getFechaApertura() { return fechaApertura; }

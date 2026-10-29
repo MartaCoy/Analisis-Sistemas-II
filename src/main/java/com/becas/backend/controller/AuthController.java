@@ -1,6 +1,7 @@
 package com.becas.backend.controller;
 
 import com.becas.backend.config.JwtService;
+import com.becas.backend.validation.PasswordPolicy;
 
 import com.becas.backend.dto.AuthResponse;
 import com.becas.backend.dto.LoginRequest;
@@ -50,6 +51,9 @@ public class AuthController {
     @PostMapping("/login")
     //public ResponseEntity<?> login(@RequestBody LoginRequest request) {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        if (PasswordPolicy.superaLimite(request.getPassword())) {
+            return ResponseEntity.status(401).body("Correo o contraseña incorrectos.");
+        }
         Estudiante estudiante = estudianteRepository.findByCorreo(request.getCorreo())
                 .orElse(null);
 

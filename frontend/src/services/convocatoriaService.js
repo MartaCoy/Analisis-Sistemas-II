@@ -1,3 +1,4 @@
+import { mensajeHttp } from "../utils/mensajesUsuario.js";
 import { obtenerToken } from "./authService.js";
 import { apiUrl } from "../config/api.js";
 
@@ -69,7 +70,7 @@ async function consultarAPI(ruta, { signal } = {}) {
 
       throw crearError(
         mensajes[respuesta.status] ||
-          `No se pudieron consultar las convocatorias (HTTP ${respuesta.status}).`,
+          mensajeHttp(respuesta.status, "general", "ESTUDIANTE"),
         respuesta.status
       );
     }
@@ -87,7 +88,7 @@ async function consultarAPI(ruta, { signal } = {}) {
 
     if (!contentType.toLowerCase().includes("json")) {
       throw crearError(
-        "El servidor no devolvió una respuesta JSON."
+        "No pudimos leer la respuesta del servicio. Actualiza la pantalla."
       );
     }
 
@@ -95,7 +96,7 @@ async function consultarAPI(ruta, { signal } = {}) {
       return JSON.parse(texto);
     } catch {
       throw crearError(
-        "La respuesta del servidor no contiene JSON válido."
+        "No pudimos leer la respuesta del servicio. Actualiza la pantalla."
       );
     }
   } catch (error) {

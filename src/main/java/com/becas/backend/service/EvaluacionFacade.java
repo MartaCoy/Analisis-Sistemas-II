@@ -29,6 +29,7 @@ public class EvaluacionFacade {
     private final EstudianteRepository estudianteRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final Map<String, CriterioEvaluacion> criterios;
+    private final RegistroSolicitudService registros;
 
     public EvaluacionFacade(SolicitudService solicitudService,
                             ConvocatoriaService convocatoriaService,
@@ -36,6 +37,7 @@ public class EvaluacionFacade {
                             ComiteMiembroRepository comiteMiembroRepository,
                             EstudianteRepository estudianteRepository,
                             ApplicationEventPublisher eventPublisher,
+                            RegistroSolicitudService registros,
                             List<CriterioEvaluacion> listaCriterios) {
         this.solicitudService = solicitudService;
         this.convocatoriaService = convocatoriaService;
@@ -43,6 +45,7 @@ public class EvaluacionFacade {
         this.comiteMiembroRepository = comiteMiembroRepository;
         this.estudianteRepository = estudianteRepository;
         this.eventPublisher = eventPublisher;
+        this.registros = registros;
         this.criterios = listaCriterios.stream()
                 .collect(Collectors.toMap(CriterioEvaluacion::tipoBeca, Function.identity()));
     }
@@ -82,6 +85,8 @@ public class EvaluacionFacade {
         evaluacion.setPuntaje(request.getPuntaje());
         evaluacion.setObservaciones(request.getObservaciones());
         Evaluacion guardada = evaluacionRepository.save(evaluacion);
+        registros.accion(solicitudId, correoEvaluador, "REGISTRO_EVALUACION", "EXITOSA",
+            "Puntaje registrado: " + request.getPuntaje());
 
         resolverSiEstaCompleta(solicitud);
         return guardada;
@@ -111,7 +116,11 @@ public class EvaluacionFacade {
                 ? solicitudService.aprobar(solicitud.getId())
                 : solicitudService.rechazar(solicitud.getId());
 
-        eventPublisher.publishEvent(
-                new SolicitudResueltaEvent(resuelta.getId(), resuelta.getEstudianteId(), resuelta.getEstado()));
+        // Las notificaciones e historial ya se generan en SolicitudService.
+        // El evento legado se mantiene solo para consumidores de resolución FINAL.
+        if ("APROBADA".equals(resuelta.getEstado()) || "RECHAZADA".equals(resuelta.getEstado())) {
+            eventPublisher.publishEvent(new SolicitudResueltaEvent(
+                resuelta.getId(), resuelta.getEstudianteId(), resuelta.getEstado()));
+        }
     }
 }

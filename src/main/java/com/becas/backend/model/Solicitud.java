@@ -1,6 +1,7 @@
 package com.becas.backend.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "solicitudes")
@@ -16,9 +17,13 @@ public class Solicitud {
     private String estado = "RECIBIDA";
     @Column(name = "fecha_solicitud", nullable = false)
     private LocalDateTime fechaSolicitud = LocalDateTime.now();
+    @Column(name = "monto_solicitado", precision = 14, scale = 2)
+    private BigDecimal montoSolicitado;
     @Column(name = "comite_id")
     private Long comiteId;
 
+    public BigDecimal getMontoSolicitado() { return montoSolicitado; }
+    public void setMontoSolicitado(BigDecimal montoSolicitado) { this.montoSolicitado = montoSolicitado; }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Long getEstudianteId() { return estudianteId; }

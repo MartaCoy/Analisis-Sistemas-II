@@ -28,6 +28,7 @@ export function formularioDesde(datos = {}) {
     tipoBeca: String(origen.tipoBeca ?? "ACADEMICA"),
     requisitos: String(origen.requisitos ?? ""),
     beneficio: String(origen.beneficio ?? ""),
+    montoBeca: String(origen.montoBeca ?? ""),
     fechaApertura: String(origen.fechaApertura ?? ""),
     fechaCierre: String(origen.fechaCierre ?? ""),
   };
@@ -110,6 +111,15 @@ export function validarFormulario(
     errores.requisitos = `Los requisitos admiten hasta ${LIMITES_ADMIN.requisitos} caracteres.`;
   }
 
+  if (formulario.montoBeca.trim()) {
+    if (!/^\d{1,12}(\.\d{1,2})?$/.test(formulario.montoBeca.trim()) ||
+        Number(formulario.montoBeca) <= 0) {
+      errores.montoBeca = "Indica un monto válido mayor a cero y con máximo dos decimales.";
+    }
+  } else if (publicar) {
+    errores.montoBeca = "Debes definir el monto antes de publicar.";
+  }
+
   if (formulario.beneficio.length > LIMITES_ADMIN.beneficio) {
     errores.beneficio = `El beneficio admite hasta ${LIMITES_ADMIN.beneficio} caracteres.`;
   }
@@ -155,6 +165,7 @@ export function cuerpoConvocatoria(datos) {
     tipoBeca: formulario.tipoBeca,
     requisitos: formulario.requisitos.trim() || null,
     beneficio: formulario.beneficio.trim() || null,
+    montoBeca: formulario.montoBeca.trim() ? Number(formulario.montoBeca) : null,
     fechaApertura: formulario.fechaApertura || null,
     fechaCierre: formulario.fechaCierre || null,
   };

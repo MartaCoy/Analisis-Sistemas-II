@@ -1,231 +1,82 @@
-import { useState } from "react";
-
-import {
-  iniciarSesion,
-  guardarSesion,
-} from "../services/authService";
-
-import {
-  usePageTransition,
-} from "../components/usePageTransition";
-
-import TransitionLink from "../components/TransitionLink";
-
+import { useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { iniciarSesion, guardarSesion } from "../services/authService.js";
+import { usePageTransition } from "../components/usePageTransition.js";
+import TransitionLink from "../components/TransitionLink.jsx";
+import CampoPassword from "../components/CampoPassword.jsx";
 import "../styles/registro.css";
 import "../styles/login.css";
+import "../styles/auth-mejoras.css";
 
-const esperar = (tiempo) =>
-  new Promise((resolve) => {
-    window.setTimeout(resolve, tiempo);
-  });
-
-function Login() {
-  const { irA } = usePageTransition();
-
-  const [formulario, setFormulario] = useState({
-    correo: "",
-    password: "",
-  });
-
+export default function Login() {
+  const { irA, transicionActiva } = usePageTransition();
+  const location = useLocation();
+  const [formulario, setFormulario] = useState({ correo: "", password: "" });
   const [error, setError] = useState("");
+  const [campos, setCampos] = useState({});
   const [cargando, setCargando] = useState(false);
-  const [estadoAuth, setEstadoAuth] = useState(null);
+  const enviando = useRef(false);
+  const aviso = location.state?.aviso === "sesion" ? "Inicia sesión para continuar con tu trámite." : "";
 
-  const actualizarCampo = (event) => {
-    setFormulario({
-      ...formulario,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const obtenerMensajeAuth = () => {
-    if (estadoAuth === "verificando") {
-      return "VERIFICANDO IDENTIDAD";
-    }
-
-    if (estadoAuth === "sincronizando") {
-      return "SINCRONIZANDO PERFIL";
-    }
-
-    if (estadoAuth === "autorizado") {
-      return "ACCESO AUTORIZADO";
-    }
-
-    return "";
-  };
-
-  const manejarSubmit = async (event) => {
-    event.preventDefault();
-
+  function actualizar(event) {
+    const { name, value } = event.target;
+    setFormulario((prev) => ({ ...prev, [name]: value }));
+    setCampos((prev) => ({ ...prev, [name]: "" }));
     setError("");
-
-    if (!formulario.correo || !formulario.password) {
-      setError("Ingresa tu correo y contraseña.");
-      return;
-    }
-
-    setCargando(true);
-    setEstadoAuth("verificando");
-
+  }
+  async function enviar(event) {
+    event.preventDefault();
+    if (enviando.current || transicionActiva) return;
+    const errores = {};
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formulario.correo.trim())) errores.correo = "Escribe un correo válido.";
+    if (!formulario.password) errores.password = "Escribe tu contraseña.";
+    setCampos(errores); setError("");
+    if (Object.keys(errores).length) { document.getElementById(Object.keys(errores)[0])?.focus(); return; }
+    enviando.current = true; setCargando(true);
     try {
       const respuesta = await iniciarSesion(formulario);
-
-      setEstadoAuth("sincronizando");
-
-      guardarSesion(respuesta);
-
-      await esperar(400);
-
-      setEstadoAuth("autorizado");
-
-      await esperar(650);
-
-      setEstadoAuth(null);
-
+      try { guardarSesion(respuesta); }
+      catch { throw new Error("No pudimos guardar tu sesión en este navegador. Revisa sus permisos de almacenamiento."); }
       irA("/dashboard");
-    } catch (err) {
-      setEstadoAuth(null);
-
-      setError(
-        err.message ||
-          "No fue posible iniciar sesión."
-      );
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  return (
-    <div className="registro-page login-page">
-      <div className="tech-grid"></div>
-
-      {estadoAuth && (
-        <div
-          className={`auth-overlay auth-overlay--${estadoAuth}`}
-        >
-          <div className="auth-scan-line"></div>
-
-          <div className="auth-nucleo">
-            <div className="auth-ring auth-ring-one"></div>
-            <div className="auth-ring auth-ring-two"></div>
-
-            <div className="auth-diamond">
-              <span></span>
-            </div>
-
-            <p>{obtenerMensajeAuth()}</p>
-
-            <small>
-              SISTEMA NACIONAL DE BECAS
-            </small>
+    } catch (err) { setError(err.message || "No fue posible iniciar sesión."); }
+    finally { enviando.current = false; setCargando(false); }
+  }
+  return <div className="registro-page login-page">
+    <div className="tech-grid" aria-hidden="true" />
+    <div className="registro-layout">
+      <div className="registro-info">
+        <div className="system-marker"><span aria-hidden="true" />SISTEMA NACIONAL DE BECAS</div>
+        <h1>ACCESO A TU <strong>CUENTA</strong></h1>
+        <p>Estudiantes y administradores: inicia sesión para acceder a las opciones correspondientes a tu cuenta.</p>
+      </div>
+      <div className="registro-card login-card">
+        <div className="corner corner-top-left" aria-hidden="true" /><div className="corner corner-bottom-right" aria-hidden="true" />
+        <div className="registro-header"><span className="status-dot" aria-hidden="true" /><p>PORTAL DE BECAS</p><h2>Iniciar sesión</h2><span>Identifícate para continuar</span></div>
+        {aviso && <p className="auth-notice" role="status">{aviso}</p>}
+        <form onSubmit={enviar} noValidate aria-busy={cargando}>
+          <div className="campo">
+            <label htmlFor="correo">CORREO</label>
+            <input id="correo" name="correo" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false}
+              value={formulario.correo} onChange={actualizar} placeholder="correo@ejemplo.com" required disabled={cargando}
+              aria-invalid={Boolean(campos.correo)} aria-describedby={campos.correo ? "correo-error" : undefined} />
+            {campos.correo && <small className="auth-field-error" id="correo-error">{campos.correo}</small>}
           </div>
-        </div>
-      )}
-
-      <div className="registro-layout">
-        <div className="registro-info">
-          <div className="system-marker">
-            <span></span>
-            SISTEMA DE BECAS
+          <div className="campo">
+            <label htmlFor="password">CONTRASEÑA</label>
+            <CampoPassword id="password" name="password" value={formulario.password} onChange={actualizar}
+              autoComplete="current-password" placeholder="Ingresa tu contraseña" required disabled={cargando}
+              aria-invalid={Boolean(campos.password)} aria-describedby={campos.password ? "password-error" : undefined} />
+            {campos.password && <small className="auth-field-error" id="password-error">{campos.password}</small>}
           </div>
-
-          <h1>
-            ACCESO <strong>ESTUDIANTIL</strong>
-          </h1>
-
-          <p>
-            Ingresa a tu cuenta para consultar
-            convocatorias, solicitudes y el estado
-            de tus procesos de beca.
-          </p>
-        </div>
-
-        <div className="registro-card login-card">
-          <div className="corner corner-top-left"></div>
-          <div className="corner corner-bottom-right"></div>
-
-          <div className="registro-header">
-            <span className="status-dot"></span>
-
-            <p>ACCESO SEGURO</p>
-
-            <h2>Iniciar Sesión</h2>
-
-            <span>
-              Identifícate para continuar
-            </span>
-          </div>
-
-          <form onSubmit={manejarSubmit}>
-            <div className="campo">
-              <label htmlFor="correo">
-                CORREO
-              </label>
-
-              <input
-                type="email"
-                id="correo"
-                name="correo"
-                value={formulario.correo}
-                onChange={actualizarCampo}
-                placeholder="correo@ejemplo.com"
-                autoComplete="email"
-                required
-              />
-            </div>
-
-            <div className="campo">
-              <label htmlFor="password">
-                CONTRASEÑA
-              </label>
-
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formulario.password}
-                onChange={actualizarCampo}
-                placeholder="Ingresa tu contraseña"
-                autoComplete="current-password"
-                required
-              />
-            </div>
-
-            {error && (
-              <div className="mensaje error">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={cargando}
-            >
-              {cargando
-                ? "VERIFICANDO..."
-                : "INICIAR SESIÓN"}
-
-              <span>→</span>
-            </button>
-          </form>
-
-          <p className="login-text">
-            ¿No tienes cuenta?{" "}
-
-            <TransitionLink to="/registro">
-              Regístrate
-            </TransitionLink>
-          </p>
-
-          <p className="login-volver">
-            <TransitionLink to="/">
-              ← Volver al inicio
-            </TransitionLink>
-          </p>
-        </div>
+          {error && <div className="mensaje error" role="alert">{error}</div>}
+          <button className="auth-submit" type="submit" disabled={cargando || transicionActiva}>
+            {cargando ? "INICIANDO SESIÓN..." : "INICIAR SESIÓN"}<span aria-hidden="true">→</span>
+          </button>
+          <p className="auth-sr-only" role="status">{cargando ? "Verificando tus credenciales." : ""}</p>
+        </form>
+        <p className="login-text">¿Aún no tienes cuenta de estudiante? <TransitionLink to="/registro">Regístrate</TransitionLink></p>
+        <p className="login-volver"><TransitionLink to="/">← Volver al inicio</TransitionLink></p>
       </div>
     </div>
-  );
+  </div>;
 }
-
-export default Login;
