@@ -1,6 +1,6 @@
 // VISOR_DOCUMENTOS_PROTEGIDOS_V1
 import { obtenerToken } from "./authService.js";
-const API = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8080").replace(/\/+$/, "");
+const API = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
 
 export async function abrirDocumentoProtegido(documento, descargar = false) {
   const pestana = descargar ? null : window.open("about:blank", "_blank");
