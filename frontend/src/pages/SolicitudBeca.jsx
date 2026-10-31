@@ -1,3 +1,4 @@
+import { Link as EnlaceExpediente } from "react-router-dom";
 import {
   useEffect,
   useMemo,
@@ -385,7 +386,7 @@ function SolicitudBeca() {
         setDocumentos([]);
 
         setMensaje(
-          `Solicitud #${nuevaSolicitud.id} creada correctamente. Ahora puedes adjuntar tus documentos.`
+          `Solicitud #${nuevaSolicitud.id} registrada y enviada correctamente. Ahora puedes adjuntar tus documentos.`
         );
       } catch (error) {
         setErrorAccion(
@@ -725,17 +726,13 @@ function SolicitudBeca() {
                     </small>
 
                     <strong>
-                      Crear solicitud
+                      Enviar solicitud
                     </strong>
                   </div>
                 </div>
 
                 <p className="solb-operacion-texto">
-                  Al continuar se
-                  registrará una solicitud
-                  asociada a esta
-                  convocatoria y a tu
-                  cuenta actual.
+                  Al enviar, tu solicitud quedará registrada como RECIBIDA. Después podrás adjuntar documentos. Solo se permite una postulación por convocatoria.
                 </p>
 
                 {!puedeSolicitar && (
@@ -764,8 +761,8 @@ function SolicitudBeca() {
                   }
                 >
                   {creando
-                    ? "REGISTRANDO..."
-                    : "CREAR SOLICITUD"}
+                    ? "ENVIANDO..."
+                    : "ENVIAR SOLICITUD"}
 
                   {!creando && (
                     <span
@@ -901,6 +898,32 @@ function SolicitudBeca() {
                     )}
                   </button>
                 </form>
+
+                <div
+                  className="solb-mensaje solb-mensaje-ok"
+                  role="status"
+                >
+                  Tu solicitud #{solicitud.id} ya está registrada.
+                  Solo puedes postularte una vez a esta convocatoria.
+                  Los documentos se asocian a este mismo expediente.
+                </div>
+
+                <EnlaceExpediente
+                  to={`/mis-solicitudes/${solicitud.id}`}
+                  className="solb-principal"
+                  style={{
+                    display: "inline-flex",
+                    justifyContent: "center",
+                    textDecoration: "none"
+                  }}
+                  aria-disabled={subiendo}
+                  onClick={subiendo ? (event) => event.preventDefault() : undefined}
+                >
+                  {documentos.length > 0
+                    ? "FINALIZAR Y VER MI SOLICITUD"
+                    : "VER MI SOLICITUD"}
+                </EnlaceExpediente>
+
               </>
             )}
 
