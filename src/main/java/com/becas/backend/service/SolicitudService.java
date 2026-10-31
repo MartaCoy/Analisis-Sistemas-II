@@ -63,7 +63,7 @@ public class SolicitudService {
 
     @Transactional
     public Solicitud crear(Long estudianteId, SolicitudRequest request) {
-        Convocatoria convocatoria = convocatorias.findById(request.getConvocatoriaId())
+        Convocatoria convocatoria = convocatorias.bloquearParaPostulacion(request.getConvocatoriaId())
             .orElseThrow(() -> new IllegalArgumentException("La convocatoria no existe."));
         if (!"PUBLICADA".equals(convocatoria.getEstado())) {
             throw new IllegalStateException("La convocatoria no está abierta para recibir solicitudes.");
